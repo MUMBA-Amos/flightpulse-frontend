@@ -32,10 +32,10 @@ export class Dashboard {
   private readonly refresher = inject(RefreshService);
 
   protected readonly tabs: Tab[] = [
-    { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: 'Daily sample' },
-    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: 'In the daily sample' },
-    { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: 'In the daily sample' },
-    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide · every 30 min' },
+    { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: "Today's snapshot" },
+    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: "Today's snapshot" },
+    { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: "Today's snapshot" },
+    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide, updated every 30 min' },
   ];
 
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
