@@ -5,8 +5,8 @@
   "outputDirectory": "dist/frontend/browser",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "http://43.216.181.145/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "http://43.216.181.145/api/$1"
     },
     {
       "source": "/(.*)",
