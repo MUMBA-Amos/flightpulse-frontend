@@ -1,4 +1,4 @@
-import { Component, booleanAttribute, input, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { Brand } from './brand';
@@ -6,15 +6,13 @@ import { Brand } from './brand';
 /**
  * Site-wide navigation bar: logo, page links and any page-specific actions
  * passed as content (e.g. the dashboard's Refresh button). On narrow screens
- * the links fold into a menu.
- *
- * `overlay`: transparent, for sitting on top of the home page's hero globe.
+ * the links fold into a menu. Stays at the top of the page while scrolling.
  */
 @Component({
   selector: 'app-site-nav',
   imports: [RouterLink, RouterLinkActive, Brand],
   template: `
-    <header class="nav" [class.nav--overlay]="overlay()">
+    <header class="nav">
       <app-brand />
 
       <nav class="nav__links" [class.nav__links--open]="menuOpen()" aria-label="Main">
@@ -53,24 +51,22 @@ import { Brand } from './brand';
     </header>
   `,
   styles: `
-    :host { display: block; }
+    :host {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: block;
+    }
 
     .nav {
       position: relative;
       display: flex;
       align-items: center;
       gap: 24px;
-      padding: 14px clamp(16px, 4vw, 40px);
+      padding: 14px var(--gutter);
       border-bottom: 1px solid var(--border);
       background: rgba(8, 12, 20, 0.85);
       backdrop-filter: blur(10px);
-    }
-
-    .nav--overlay {
-      padding: 20px clamp(16px, 5vw, 64px);
-      border-bottom-color: transparent;
-      background: transparent;
-      backdrop-filter: none;
     }
 
     .nav__links {
@@ -128,8 +124,8 @@ import { Brand } from './brand';
       .nav__links {
         position: absolute;
         top: 100%;
-        right: clamp(16px, 4vw, 40px);
-        left: clamp(16px, 4vw, 40px);
+        right: var(--gutter);
+        left: var(--gutter);
         z-index: 20;
         display: none;
         flex-direction: column;
@@ -149,9 +145,6 @@ import { Brand } from './brand';
   `,
 })
 export class SiteNav {
-  /** Transparent, for sitting over the home page's hero. */
-  readonly overlay = input(false, { transform: booleanAttribute });
-
   protected readonly menuOpen = signal(false);
   protected readonly links = [
     { path: '/', label: 'Home' },

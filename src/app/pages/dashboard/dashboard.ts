@@ -34,6 +34,7 @@ const PLANE_ICON =
   imports: [DecimalPipe, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel, SiteNav],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  host: { class: 'page' },
 })
 export class Dashboard {
   private readonly api = inject(FlightPulseApi);

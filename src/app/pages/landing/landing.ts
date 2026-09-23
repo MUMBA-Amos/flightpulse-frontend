@@ -24,6 +24,7 @@ const WEATHER_AIRPORTS = 8;
   imports: [DatePipe, DecimalPipe, RouterLink, Globe, WeatherBadge, WeatherCard, SiteNav],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
+  host: { class: 'page' },
 })
 export class Landing {
   private readonly api = inject(FlightPulseApi);

@@ -36,6 +36,7 @@ interface Extreme {
   imports: [DecimalPipe, StateNotice, WeatherCard, WeatherIcon, SiteNav],
   templateUrl: './weather.html',
   styleUrl: './weather.scss',
+  host: { class: 'page' },
 })
 export class Weather {
   private readonly api = inject(FlightPulseApi);

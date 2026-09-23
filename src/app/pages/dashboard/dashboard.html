@@ -1,4 +1,4 @@
-<app-site-nav class="topbar">
+<app-site-nav>
   <span class="updated">Refreshed {{ lastRefresh().toLocaleTimeString() }}</span>
   <button type="button" class="btn" (click)="refresh()" [disabled]="stats.isLoading()">
     <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">

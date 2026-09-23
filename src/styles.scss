@@ -14,6 +14,8 @@
   --danger: #f87171;
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /** Side margin shared by the nav, page content and footer, so edges line up across pages. */
+  --gutter: clamp(16px, 4vw, 40px);
 
   color-scheme: dark;
 }
@@ -42,6 +44,41 @@ body {
   background:
     radial-gradient(1200px 500px at 90% -10%, rgba(245, 184, 61, 0.06), transparent 60%),
     var(--bg);
+}
+
+// ---------- Page shell shared by every page ----------
+
+// Soft glows plus a faint dot grid that fades out down the page.
+.page {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 420px at 85% 0%, rgba(245, 184, 61, 0.08), transparent 65%),
+    radial-gradient(700px 500px at 0% 30%, rgba(57, 135, 229, 0.08), transparent 70%),
+    var(--bg);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 60%);
+  }
+}
+
+// Small uppercase label above a heading, e.g. "DASHBOARD".
+.kicker {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 // ---------- Shared building blocks used across panels ----------

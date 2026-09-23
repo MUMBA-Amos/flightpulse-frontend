@@ -4,8 +4,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100svh;
+  // Fills the screen below the nav bar.
+  min-height: calc(100vh - 68px);
+  min-height: calc(100svh - 68px);
   overflow: hidden;
 
   &__globe {
@@ -24,12 +25,6 @@
   }
 }
 
-// Sits above the globe and its veil.
-.hero-nav {
-  position: relative;
-  z-index: 3;
-}
-
 .hero {
   position: relative;
   z-index: 2;
@@ -38,7 +33,7 @@
   flex-direction: column;
   justify-content: center;
   max-width: 640px;
-  padding: 24px clamp(16px, 5vw, 64px) 96px;
+  padding: 24px var(--gutter) 96px;
 
   > * { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
   > :nth-child(2) { animation-delay: 0.08s; }
@@ -184,7 +179,7 @@
 .tracking {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 72px clamp(16px, 5vw, 64px) 64px;
+  padding: 72px var(--gutter) 64px;
 
   &__head {
     max-width: 640px;
@@ -219,15 +214,6 @@
     position: absolute;
     inset: 0;
   }
-}
-
-.kicker {
-  margin: 0 0 10px;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
 }
 
 .stage-hint {
@@ -491,7 +477,7 @@
 .weather {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 72px clamp(16px, 5vw, 64px) 0;
+  padding: 72px var(--gutter) 0;
 
   &__grid {
     display: grid;
@@ -514,7 +500,7 @@
 .delays {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 24px clamp(16px, 5vw, 64px) 72px;
+  padding: 24px var(--gutter) 72px;
 
   &__grid {
     display: grid;

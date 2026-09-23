@@ -50,7 +50,7 @@ import { Brand } from './brand';
       gap: 32px;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 40px clamp(16px, 5vw, 64px) 32px;
+      padding: 40px var(--gutter) 32px;
     }
 
     .footer__about p {
@@ -94,7 +94,7 @@ import { Brand } from './brand';
       gap: 8px 24px;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 16px clamp(16px, 5vw, 64px) 24px;
+      padding: 16px var(--gutter) 24px;
       border-top: 1px solid var(--border);
       font-size: 0.75rem;
       color: var(--text-muted);
