@@ -14,6 +14,9 @@ interface DelayInfo {
   tone: 'ok' | 'late' | 'unknown';
 }
 
+type StatusFilter = 'all' | 'active' | 'landed';
+type DelayFilter = 'all' | 'delayed' | 'on-time';
+
 @Component({
   selector: 'app-flights-panel',
   imports: [DatePipe, StateNotice, WeatherBadge],
@@ -25,14 +28,48 @@ export class FlightsPanel {
 
   protected readonly flights = rxResource({ stream: () => this.api.getFlights() });
   protected readonly query = signal('');
+  protected readonly statusFilter = signal<StatusFilter>('all');
+  protected readonly delayFilter = signal<DelayFilter>('all');
+  /** Airline name, or '' for all airlines. */
+  protected readonly airlineFilter = signal('');
+
+  protected readonly statusOptions: { id: StatusFilter; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'active', label: 'In the air' },
+    { id: 'landed', label: 'Landed' },
+  ];
+  protected readonly delayOptions: { id: DelayFilter; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'delayed', label: 'Delayed' },
+    { id: 'on-time', label: 'On time' },
+  ];
 
   protected readonly all = computed(() => (this.flights.hasValue() ? this.flights.value() : []));
 
+  /** Airlines in the current flights, A–Z, for the airline filter. */
+  protected readonly airlines = computed(() =>
+    [...new Set(this.all().map((f) => f.airline_name).filter((n): n is string => !!n))].sort((a, b) =>
+      a.localeCompare(b),
+    ),
+  );
+
   protected readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();
-    if (!q) return this.all();
-    return this.all().filter((f) => this.searchText(f).includes(q));
+    const status = this.statusFilter();
+    const delay = this.delayFilter();
+    const airline = this.airlineFilter();
+    return this.all().filter((f) => {
+      if (status !== 'all' && (f.flight_status ?? '').toLowerCase() !== status) return false;
+      if (delay === 'delayed' && !this.isDelayed(f)) return false;
+      if (delay === 'on-time' && this.isDelayed(f)) return false;
+      if (airline && f.airline_name !== airline) return false;
+      return !q || this.searchText(f).includes(q);
+    });
   });
+
+  protected readonly filtersActive = computed(
+    () => !!this.query() || this.statusFilter() !== 'all' || this.delayFilter() !== 'all' || !!this.airlineFilter(),
+  );
 
   protected readonly delayedCount = computed(() => this.all().filter((f) => this.isDelayed(f)).length);
   protected readonly errorMessage = computed(() => describeHttpError(this.flights.error()));
@@ -44,6 +81,17 @@ export class FlightsPanel {
 
   protected onSearch(event: Event): void {
     this.query.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onAirline(event: Event): void {
+    this.airlineFilter.set((event.target as HTMLSelectElement).value);
+  }
+
+  protected clearFilters(): void {
+    this.query.set('');
+    this.statusFilter.set('all');
+    this.delayFilter.set('all');
+    this.airlineFilter.set('');
   }
 
   protected flightCode(f: Flight): string {

@@ -19,10 +19,40 @@
       (input)="onSearch($event)"
     />
   </label>
+
+  <div class="segmented" role="group" aria-label="Filter by status">
+    @for (o of statusOptions; track o.id) {
+      <button type="button" [class.active]="statusFilter() === o.id" [attr.aria-pressed]="statusFilter() === o.id" (click)="statusFilter.set(o.id)">
+        {{ o.label }}
+      </button>
+    }
+  </div>
+
+  <div class="segmented" role="group" aria-label="Filter by delay">
+    @for (o of delayOptions; track o.id) {
+      <button type="button" [class.active]="delayFilter() === o.id" [attr.aria-pressed]="delayFilter() === o.id" (click)="delayFilter.set(o.id)">
+        {{ o.label }}
+      </button>
+    }
+  </div>
+
+  <label>
+    <span class="visually-hidden">Filter by airline</span>
+    <select class="select" [value]="airlineFilter()" (change)="onAirline($event)">
+      <option value="">All airlines</option>
+      @for (name of airlines(); track name) {
+        <option [value]="name">{{ name }}</option>
+      }
+    </select>
+  </label>
+
   @if (flights.hasValue()) {
     <span class="toolbar__meta">
       {{ filtered().length }} of {{ all().length }} ·
       <span [class.warn]="delayedCount() > 0">{{ delayedCount() }} delayed</span>
+      @if (filtersActive()) {
+        · <button type="button" class="link" (click)="clearFilters()">Clear filters</button>
+      }
     </span>
   }
 </div>
@@ -34,7 +64,7 @@
 } @else if (all().length === 0) {
   <app-state-notice message="No flights to show right now." />
 } @else if (filtered().length === 0) {
-  <app-state-notice [message]="'No flights match “' + query() + '”.'" actionLabel="Clear search" (action)="query.set('')" />
+  <app-state-notice message="No flights match these filters." actionLabel="Clear filters" (action)="clearFilters()" />
 } @else {
   <div class="board" [class.stale]="flights.isLoading()">
     <div class="board__head" aria-hidden="true">

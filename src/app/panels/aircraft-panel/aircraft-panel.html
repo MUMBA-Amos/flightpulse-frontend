@@ -28,11 +28,33 @@
     }
   </div>
 
+  <label>
+    <span class="visually-hidden">Filter by country</span>
+    <select class="select" [value]="countryFilter()" (change)="onCountry($event)">
+      <option value="">All countries</option>
+      @for (c of countries(); track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </label>
+
+  <label>
+    <span class="visually-hidden">Sort aircraft</span>
+    <select class="select" [value]="sortBy()" (change)="onSort($event)">
+      @for (o of sortOptions; track o.id) {
+        <option [value]="o.id">Sort: {{ o.label }}</option>
+      }
+    </select>
+  </label>
+
   @if (aircraft.hasValue()) {
     <span class="toolbar__meta">
       {{ filtered().length }} of {{ all().length }}
       @if (total(); as total) {
         <span class="muted"> · newest of {{ total | number }} worldwide</span>
+      }
+      @if (filtersActive()) {
+        · <button type="button" class="link" (click)="clearFilters()">Clear filters</button>
       }
     </span>
   }
@@ -45,7 +67,7 @@
 } @else if (all().length === 0) {
   <app-state-notice message="No aircraft to show right now." />
 } @else if (filtered().length === 0) {
-  <app-state-notice message="No aircraft match the current filters." actionLabel="Reset filters" (action)="query.set(''); groundFilter.set('all')" />
+  <app-state-notice message="No aircraft match the current filters." actionLabel="Clear filters" (action)="clearFilters()" />
 } @else {
   <div class="table-wrap" [class.stale]="aircraft.isLoading()">
     <table class="data-table">

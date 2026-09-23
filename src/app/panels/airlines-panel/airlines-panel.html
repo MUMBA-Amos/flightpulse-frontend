@@ -5,12 +5,51 @@
   </div>
 </div>
 
+<div class="toolbar">
+  <label class="search">
+    <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+    <span class="visually-hidden">Search airlines</span>
+    <input type="search" placeholder="Search airline name or code" [value]="query()" (input)="onSearch($event)" />
+  </label>
+
+  <div class="segmented" role="group" aria-label="Filter by late flights">
+    @for (o of lateOptions; track o.id) {
+      <button type="button" [class.active]="lateFilter() === o.id" [attr.aria-pressed]="lateFilter() === o.id" (click)="lateFilter.set(o.id)">
+        {{ o.label }}
+      </button>
+    }
+  </div>
+
+  <label>
+    <span class="visually-hidden">Sort airlines</span>
+    <select class="select" [value]="sortBy()" (change)="onSort($event)">
+      @for (o of sortOptions; track o.id) {
+        <option [value]="o.id">Sort: {{ o.label }}</option>
+      }
+    </select>
+  </label>
+
+  @if (airlines.hasValue()) {
+    <span class="toolbar__meta">
+      {{ filtered().length }} of {{ all().length }}
+      @if (filtersActive()) {
+        · <button type="button" class="link" (click)="clearFilters()">Clear filters</button>
+      }
+    </span>
+  }
+</div>
+
 @if (airlines.error()) {
   <app-state-notice kind="error" heading="Unable to load airlines" [message]="errorMessage()" (action)="airlines.reload()" />
 } @else if (!airlines.hasValue()) {
   <app-state-notice kind="loading" message="Loading airline performance…" />
 } @else if (all().length === 0) {
   <app-state-notice message="No airlines to show right now." />
+} @else if (filtered().length === 0) {
+  <app-state-notice message="No airlines match these filters." actionLabel="Clear filters" (action)="clearFilters()" />
 } @else {
   <div class="table-wrap" [class.stale]="airlines.isLoading()">
     <table class="data-table">
@@ -25,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (a of all(); track $index) {
+        @for (a of filtered(); track $index) {
           <tr>
             <td>
               <div class="stack">
