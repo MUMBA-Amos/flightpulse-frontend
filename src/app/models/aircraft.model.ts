@@ -26,3 +26,20 @@ export interface AircraftState {
   position_time: string | null;
   contact_time: string | null;
 }
+
+export interface RouteAirport {
+  iata: string | null;
+  icao: string | null;
+  name: string | null;
+  city: string | null;
+}
+
+/** Origin and destination for a callsign, from GET /aircraft/route/{callsign}. All null when unknown. */
+export interface AircraftRoute {
+  callsign: string;
+  /** "flights" = our Aviationstack data, "adsbdb" = the callsign's usual route. */
+  source: 'flights' | 'adsbdb' | null;
+  airline: string | null;
+  origin: RouteAirport | null;
+  destination: RouteAirport | null;
+}

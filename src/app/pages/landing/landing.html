@@ -119,6 +119,26 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
           </div>
+          <div class="route" aria-live="polite">
+            @if (route.isLoading()) {
+              <span class="muted">Looking up route…</span>
+            } @else if (route.hasValue() && route.value().origin && route.value().destination) {
+              <div class="route__airport">
+                <span class="route__code">{{ route.value().origin!.iata ?? route.value().origin!.icao }}</span>
+                <span class="muted">{{ route.value().origin!.city ?? route.value().origin!.name }}</span>
+              </div>
+              <svg class="route__arrow" viewBox="0 0 24 24" aria-label="to"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              <div class="route__airport route__airport--end">
+                <span class="route__code">{{ route.value().destination!.iata ?? route.value().destination!.icao }}</span>
+                <span class="muted">{{ route.value().destination!.city ?? route.value().destination!.name }}</span>
+              </div>
+            } @else {
+              <span class="muted">Route unknown for this callsign</span>
+            }
+          </div>
+          @if (route.hasValue() && route.value().source === 'adsbdb') {
+            <p class="route__note">Usual route for this callsign</p>
+          }
           <dl class="detail__grid">
             <div>
               <dt>Altitude</dt>

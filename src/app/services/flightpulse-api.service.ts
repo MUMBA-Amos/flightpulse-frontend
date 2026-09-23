@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { AircraftState } from '../models/aircraft.model';
+import { AircraftRoute, AircraftState } from '../models/aircraft.model';
 import { AirlinePerformance } from '../models/airline.model';
 import { AirportActivity } from '../models/airport.model';
 import { Flight } from '../models/flight.model';
@@ -45,5 +45,10 @@ export class FlightPulseApi {
 
   getAircraft(): Observable<AircraftState[]> {
     return this.http.get<AircraftState[]>(`${this.baseUrl}/aircraft/`);
+  }
+
+  /** Origin and destination for a callsign (all null when unknown). */
+  getAircraftRoute(callsign: string): Observable<AircraftRoute> {
+    return this.http.get<AircraftRoute>(`${this.baseUrl}/aircraft/route/${encodeURIComponent(callsign)}`);
   }
 }

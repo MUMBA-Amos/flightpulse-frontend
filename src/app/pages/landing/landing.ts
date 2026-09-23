@@ -62,6 +62,11 @@ export class Landing {
   protected readonly selectedId = signal<string | null>(null);
   protected readonly selected = computed(() => this.airborne().find((a) => a.icao24 === this.selectedId()) ?? null);
   protected readonly aircraftError = computed(() => describeHttpError(this.aircraft.error()));
+  /** Origin/destination of the selected aircraft, looked up by callsign. */
+  protected readonly route = rxResource({
+    params: () => this.selected()?.callsign?.trim() || undefined,
+    stream: ({ params }) => this.api.getAircraftRoute(params),
+  });
 
   protected readonly figures: { label: string; key: keyof FlightPulseStats }[] = [
     { label: 'Flights', key: 'total_flights' },
