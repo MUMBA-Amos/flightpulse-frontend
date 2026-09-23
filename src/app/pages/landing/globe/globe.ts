@@ -10,7 +10,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
-import { geoDistance, geoGraticule10, geoOrthographic, geoPath } from 'd3-geo';
+import { geoDistance, geoGraticule10, geoInterpolate, geoOrthographic, geoPath } from 'd3-geo';
 import type { Feature, MultiPolygon } from 'geojson';
 import { feature } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
@@ -36,6 +36,8 @@ const TILT_DEG = -18;
 const TRAIL_DEG = 1.6;
 /** How far the centred globe zooms in on a tracked aircraft. */
 const TRACK_ZOOM = 2.2;
+/** Width of the tracked-aircraft card over the globe's left side (CSS pixels, incl. margin). */
+const DETAIL_CARD_WIDTH = 356;
 /** Click tolerance around a plane, in CSS pixels. */
 const HIT_RADIUS = 16;
 /** Pointer movement, in CSS pixels, before a press counts as a drag rather than a click. */
@@ -73,6 +75,14 @@ function planeSprite(size: number, selected: boolean, dpr: number): HTMLCanvasEl
 
   spriteCache.set(key, sprite);
   return sprite;
+}
+
+/** Origin → destination of the tracked aircraft, as [longitude, latitude]. */
+export interface RouteLine {
+  from: [number, number];
+  to: [number, number];
+  fromLabel: string;
+  toLabel: string;
 }
 
 interface Plane {
@@ -119,6 +129,8 @@ function destination(lon: number, lat: number, bearing: number, distDeg: number)
 export class Globe {
   readonly aircraft = input<AircraftState[]>([]);
   readonly selected = input<string | null>(null);
+  /** Route of the selected aircraft, drawn when it is being tracked. */
+  readonly route = input<RouteLine | null>(null);
   readonly layout = input<'hero' | 'centered'>('hero');
   readonly interactive = input(false, { transform: booleanAttribute });
   /** Emits the icao24 of a clicked plane, or null when empty space is clicked. */
@@ -131,6 +143,8 @@ export class Globe {
   private rotLon = 0;
   private rotLat = TILT_DEG;
   private zoom = 1;
+  /** Horizontal shift of the globe, so the tracked-aircraft card doesn't cover the route. */
+  private offsetX = 0;
   private time = 0;
   private dragging = false;
   /** `time` at which the idle spin resumes after a drag. */
@@ -167,6 +181,7 @@ export class Globe {
     // Without animation, jump straight to the selected aircraft.
     effect(() => {
       this.selected();
+      this.route();
       if (!reducedMotion) return;
       this.aim(1);
       this.draw();
@@ -302,11 +317,39 @@ export class Globe {
   /** Eases rotation/zoom toward the tracked plane (or the idle view) by fraction `k`. */
   private aim(k: number): void {
     const plane = this.trackedPlane();
-    const targetLat = plane ? Math.max(-70, Math.min(70, -plane.lat)) : TILT_DEG;
-    const targetZoom = plane && this.layout() === 'centered' ? TRACK_ZOOM : 1;
-    if (plane) this.rotLon += lonDelta(-plane.lon - this.rotLon) * k;
+    const focus = plane ? this.focusPoint(plane) : null;
+    const tracking = !!plane && this.layout() === 'centered';
+    const targetLat = focus ? Math.max(-70, Math.min(70, -focus[1])) : TILT_DEG;
+    const targetZoom = tracking ? this.trackZoom(plane!, focus!) : 1;
+    // Only shift when the stage is wide enough for the card and the globe side by side.
+    const targetOffset = tracking && this.width >= 640 ? Math.min(DETAIL_CARD_WIDTH / 2, this.width * 0.2) : 0;
+    if (focus) this.rotLon += lonDelta(-focus[0] - this.rotLon) * k;
     this.rotLat += (targetLat - this.rotLat) * k;
     this.zoom += (targetZoom - this.zoom) * k;
+    this.offsetX += (targetOffset - this.offsetX) * k;
+  }
+
+  /** Where to centre the view: the middle of the route if known, else the plane. */
+  private focusPoint(plane: Plane): [number, number] {
+    const route = this.route();
+    return route ? geoInterpolate(route.from, route.to)(0.5) : [plane.lon, plane.lat];
+  }
+
+  /**
+   * Zoom for a tracked plane: close in, but pulled back far enough that the
+   * plane and both ends of its route stay on screen. A point at angle θ from the
+   * view centre sits at sin(θ) × radius, so zoom must stay below ~0.85 / sin(θ).
+   */
+  private trackZoom(plane: Plane, focus: [number, number]): number {
+    const route = this.route();
+    if (!route) return TRACK_ZOOM;
+    const farthest = Math.max(
+      geoDistance(focus, [plane.lon, plane.lat]),
+      geoDistance(focus, route.from),
+      geoDistance(focus, route.to),
+    );
+    if (farthest >= Math.PI / 2) return 1;
+    return Math.max(1, Math.min(TRACK_ZOOM, 0.85 / Math.sin(farthest)));
   }
 
   private trackedPlane(): Plane | undefined {
@@ -337,10 +380,10 @@ export class Globe {
 
     const projection = this.projection
       .scale(this.baseRadius * this.zoom)
-      .translate(this.centre)
+      .translate([this.centre[0] + this.offsetX, this.centre[1]])
       .rotate([this.rotLon, this.rotLat]);
     const path = geoPath(projection, ctx);
-    const [cx, cy] = this.centre;
+    const [cx, cy] = projection.translate();
     const r = projection.scale();
 
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
@@ -385,7 +428,66 @@ export class Globe {
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
+    this.drawRoute(ctx, projection, path);
     this.drawPlanes(ctx, projection);
+  }
+
+  /** Great-circle route: solid for the part flown, dashed for the rest, with labelled airports. */
+  private drawRoute(
+    ctx: CanvasRenderingContext2D,
+    projection: ReturnType<typeof geoOrthographic>,
+    path: ReturnType<typeof geoPath>,
+  ): void {
+    const route = this.route();
+    const plane = this.trackedPlane();
+    if (!route || !plane) return;
+    const here: [number, number] = [plane.lon, plane.lat];
+
+    ctx.save();
+    ctx.lineCap = 'round';
+
+    ctx.beginPath();
+    path({ type: 'LineString', coordinates: [route.from, here] });
+    ctx.strokeStyle = 'rgba(245, 184, 61, 0.85)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    path({ type: 'LineString', coordinates: [here, route.to] });
+    ctx.setLineDash([5, 6]);
+    ctx.strokeStyle = 'rgba(245, 184, 61, 0.55)';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Airports on the far side of the globe are hidden.
+    const [rotLon, rotLat] = projection.rotate();
+    const viewCentre: [number, number] = [-rotLon, -rotLat];
+    ctx.font = '600 11px "JetBrains Mono", ui-monospace, monospace';
+    ctx.textAlign = 'center';
+    for (const [point, label] of [
+      [route.from, route.fromLabel],
+      [route.to, route.toLabel],
+    ] as [[number, number], string][]) {
+      if (geoDistance(point, viewCentre) > Math.PI / 2 - 0.02) continue;
+      const pos = projection(point);
+      if (!pos) continue;
+      ctx.beginPath();
+      ctx.arc(pos[0], pos[1], 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#0b1220';
+      ctx.fill();
+      ctx.strokeStyle = '#f5b83d';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      if (label) {
+        ctx.fillStyle = 'rgba(10, 16, 28, 0.85)';
+        const width = ctx.measureText(label).width + 10;
+        ctx.fillRect(pos[0] - width / 2, pos[1] - 26, width, 16);
+        ctx.fillStyle = '#ffd98a';
+        ctx.fillText(label, pos[0], pos[1] - 14);
+      }
+    }
+    ctx.restore();
   }
 
   private drawPlanes(ctx: CanvasRenderingContext2D, projection: ReturnType<typeof geoOrthographic>): void {
@@ -412,7 +514,8 @@ export class Globe {
       if (!pos || !ahead) continue;
 
       const isSelected = p.id === selectedId;
-      if (selectedId && !isSelected) alpha *= 0.4;
+      // Fade the other planes, more so while a route is drawn, so it stands out.
+      if (selectedId && !isSelected) alpha *= this.route() ? 0.2 : 0.4;
       this.hits.push({ id: p.id, x: pos[0], y: pos[1] });
 
       ctx.globalAlpha = alpha;

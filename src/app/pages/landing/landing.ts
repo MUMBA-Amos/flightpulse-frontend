@@ -14,7 +14,7 @@ import { describeHttpError } from '../../shared/http-error';
 import { WeatherBadge } from '../../shared/weather-badge';
 import { airportsByActivity } from '../../shared/weather-airports';
 import { WeatherCard } from '../../shared/weather-card';
-import { Globe } from './globe/globe';
+import { Globe, RouteLine } from './globe/globe';
 
 /** How many airports the weather section shows; the rest are on /weather. */
 const WEATHER_AIRPORTS = 8;
@@ -67,6 +67,21 @@ export class Landing {
   protected readonly route = rxResource({
     params: () => this.selected()?.callsign?.trim() || undefined,
     stream: ({ params }) => this.api.getAircraftRoute(params),
+  });
+  /** The selected aircraft's route for the globe, once both airports have coordinates. */
+  protected readonly routeLine = computed<RouteLine | null>(() => {
+    const route = this.route.hasValue() ? this.route.value() : null;
+    const callsign = this.selected()?.callsign?.trim().toUpperCase();
+    if (!route || route.callsign !== callsign) return null;
+    const { origin, destination } = route;
+    if (origin?.latitude == null || origin.longitude == null) return null;
+    if (destination?.latitude == null || destination.longitude == null) return null;
+    return {
+      from: [origin.longitude, origin.latitude],
+      to: [destination.longitude, destination.latitude],
+      fromLabel: origin.iata ?? origin.icao ?? '',
+      toLabel: destination.iata ?? destination.icao ?? '',
+    };
   });
 
   protected readonly figures: { label: string; key: keyof FlightPulseStats }[] = [

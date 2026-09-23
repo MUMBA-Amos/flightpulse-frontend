@@ -32,6 +32,8 @@ export interface RouteAirport {
   icao: string | null;
   name: string | null;
   city: string | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 /** Origin and destination for a callsign, from GET /aircraft/route/{callsign}. All null when unknown. */
