@@ -6,6 +6,8 @@ import { Flight } from '../../models/flight.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
 import { describeHttpError } from '../../shared/http-error';
+import { Pager } from '../../shared/pager';
+import { paginate } from '../../shared/pagination';
 import { StateNotice } from '../../shared/state-notice';
 import { WeatherBadge } from '../../shared/weather-badge';
 
@@ -19,7 +21,7 @@ type DelayFilter = 'all' | 'delayed' | 'on-time';
 
 @Component({
   selector: 'app-flights-panel',
-  imports: [DatePipe, StateNotice, WeatherBadge],
+  imports: [DatePipe, Pager, StateNotice, WeatherBadge],
   templateUrl: './flights-panel.html',
   styleUrl: './flights-panel.scss',
 })
@@ -67,6 +69,12 @@ export class FlightsPanel {
     });
   });
 
+  /** The rows on the current page. */
+  protected readonly pages = paginate(
+    () => this.filtered(),
+    () => [this.query(), this.statusFilter(), this.delayFilter(), this.airlineFilter()].join('|'),
+  );
+
   protected readonly filtersActive = computed(
     () => !!this.query() || this.statusFilter() !== 'all' || this.delayFilter() !== 'all' || !!this.airlineFilter(),
   );
@@ -100,6 +108,18 @@ export class FlightsPanel {
 
   protected routeLabel(f: Flight): string {
     return f.route ?? `${f.departure_iata ?? '???'} → ${f.arrival_iata ?? '???'}`;
+  }
+
+  protected statusLabel(f: Flight): string {
+    const labels: Record<string, string> = {
+      active: 'In the air',
+      landed: 'Landed',
+      scheduled: 'Scheduled',
+      cancelled: 'Cancelled',
+      incident: 'Incident',
+      diverted: 'Diverted',
+    };
+    return labels[(f.flight_status ?? '').toLowerCase()] ?? 'Unknown';
   }
 
   protected statusClass(f: Flight): string {

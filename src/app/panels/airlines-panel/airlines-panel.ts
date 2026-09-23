@@ -5,6 +5,8 @@ import { AirlinePerformance } from '../../models/airline.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
 import { describeHttpError } from '../../shared/http-error';
+import { Pager } from '../../shared/pager';
+import { paginate } from '../../shared/pagination';
 import { StateNotice } from '../../shared/state-notice';
 
 type LateFilter = 'all' | 'late' | 'none-late';
@@ -12,7 +14,7 @@ type AirlineSort = 'flights' | 'late' | 'delay' | 'name';
 
 @Component({
   selector: 'app-airlines-panel',
-  imports: [StateNotice],
+  imports: [Pager, StateNotice],
   templateUrl: './airlines-panel.html',
   host: { style: 'display: block' },
 })
@@ -49,6 +51,12 @@ export class AirlinesPanel {
     });
     return rows.sort(this.comparator(this.sortBy()));
   });
+
+  /** The rows on the current page. */
+  protected readonly pages = paginate(
+    () => this.filtered(),
+    () => [this.query(), this.lateFilter(), this.sortBy()].join('|'),
+  );
 
   protected readonly filtersActive = computed(() => !!this.query() || this.lateFilter() !== 'all');
   private readonly maxFlights = computed(() => Math.max(1, ...this.all().map((a) => a.total_flights)));

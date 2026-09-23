@@ -8,6 +8,8 @@ import { reloadOnRefresh } from '../../services/refresh.service';
 import { altitudeFt, callsign, climb, lastSeen, speedKmh } from '../../shared/aircraft-format';
 import { compassPoint } from '../../shared/compass';
 import { describeHttpError } from '../../shared/http-error';
+import { Pager } from '../../shared/pager';
+import { paginate } from '../../shared/pagination';
 import { StateNotice } from '../../shared/state-notice';
 
 type GroundFilter = 'all' | 'airborne' | 'ground';
@@ -15,7 +17,7 @@ type AircraftSort = 'recent' | 'altitude' | 'speed' | 'flight';
 
 @Component({
   selector: 'app-aircraft-panel',
-  imports: [DatePipe, DecimalPipe, StateNotice],
+  imports: [DatePipe, DecimalPipe, Pager, StateNotice],
   templateUrl: './aircraft-panel.html',
   styleUrl: './aircraft-panel.scss',
 })
@@ -70,6 +72,12 @@ export class AircraftPanel {
     });
     return rows.sort(this.comparator(this.sortBy()));
   });
+
+  /** The rows on the current page. */
+  protected readonly pages = paginate(
+    () => this.filtered(),
+    () => [this.query(), this.groundFilter(), this.countryFilter(), this.sortBy()].join('|'),
+  );
 
   protected readonly filtersActive = computed(
     () => !!this.query() || this.groundFilter() !== 'all' || !!this.countryFilter(),

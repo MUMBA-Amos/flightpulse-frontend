@@ -76,7 +76,7 @@
     </div>
 
     <ul class="board__rows">
-      @for (f of filtered(); track $index) {
+      @for (f of pages.rows(); track $index) {
         <li class="row">
           <div class="cell cell--flight">
             <span class="code">{{ flightCode(f) }}</span>
@@ -111,10 +111,11 @@
           </div>
 
           <div class="cell cell--status">
-            <span [class]="statusClass(f)">{{ f.flight_status ?? 'unknown' }}</span>
+            <span [class]="statusClass(f)">{{ statusLabel(f) }}</span>
           </div>
         </li>
       }
     </ul>
   </div>
+  <app-pager [pager]="pages" />
 }

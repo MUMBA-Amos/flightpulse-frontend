@@ -5,13 +5,15 @@ import { AirportActivity } from '../../models/airport.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
 import { describeHttpError } from '../../shared/http-error';
+import { Pager } from '../../shared/pager';
+import { paginate } from '../../shared/pagination';
 import { StateNotice } from '../../shared/state-notice';
 
 type AirportSort = 'busiest' | 'departures' | 'arrivals' | 'name';
 
 @Component({
   selector: 'app-airports-panel',
-  imports: [StateNotice],
+  imports: [Pager, StateNotice],
   templateUrl: './airports-panel.html',
   host: { style: 'display: block' },
 })
@@ -38,6 +40,12 @@ export class AirportsPanel {
     );
     return rows.sort(this.comparator(this.sortBy()));
   });
+
+  /** The rows on the current page. */
+  protected readonly pages = paginate(
+    () => this.filtered(),
+    () => [this.query(), this.sortBy()].join('|'),
+  );
   private readonly maxActivity = computed(() => Math.max(1, ...this.all().map((a) => a.total_activity)));
   protected readonly errorMessage = computed(() => describeHttpError(this.airports.error()));
 

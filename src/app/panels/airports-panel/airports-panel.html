@@ -58,7 +58,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (a of filtered(); track $index) {
+        @for (a of pages.rows(); track $index) {
           <tr>
             <td>
               <div class="stack">
@@ -82,4 +82,5 @@
       </tbody>
     </table>
   </div>
+  <app-pager [pager]="pages" />
 }

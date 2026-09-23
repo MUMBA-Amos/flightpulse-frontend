@@ -83,7 +83,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (a of filtered(); track a.icao24) {
+        @for (a of pages.rows(); track a.icao24) {
           <tr>
             <td>
               <div class="stack">
@@ -127,4 +127,5 @@
       </tbody>
     </table>
   </div>
+  <app-pager [pager]="pages" />
 }
