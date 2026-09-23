@@ -22,6 +22,11 @@ export interface Metar {
   rawOb: string;
 }
 
+/** Response of GET /weather/?ids=A,B: each airport's latest METAR, or null if none. */
+export interface WeatherBatchResponse {
+  weather: Record<string, Metar | null>;
+}
+
 /** Response of GET /weather/{airport_icao} */
 export interface WeatherResponse {
   airport_icao: string;

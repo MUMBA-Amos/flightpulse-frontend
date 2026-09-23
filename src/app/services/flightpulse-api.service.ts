@@ -8,7 +8,7 @@ import { AirlinePerformance } from '../models/airline.model';
 import { AirportActivity } from '../models/airport.model';
 import { Flight } from '../models/flight.model';
 import { FlightPulseStats } from '../models/stats.model';
-import { WeatherResponse } from '../models/weather.model';
+import { WeatherBatchResponse, WeatherResponse } from '../models/weather.model';
 
 /** All HTTP access to the FlightPulse FastAPI backend. */
 @Injectable({ providedIn: 'root' })
@@ -41,6 +41,11 @@ export class FlightPulseApi {
   /** Latest METAR for an airport, by ICAO code (e.g. RJTT). */
   getWeather(icao: string): Observable<WeatherResponse> {
     return this.http.get<WeatherResponse>(`${this.baseUrl}/weather/${encodeURIComponent(icao)}`);
+  }
+
+  /** Latest METAR for several airports in one request (up to 100). */
+  getWeatherBatch(icaos: string[]): Observable<WeatherBatchResponse> {
+    return this.http.get<WeatherBatchResponse>(`${this.baseUrl}/weather/`, { params: { ids: icaos.join(',') } });
   }
 
   /** The 500 most recently seen aircraft; `airborne: true` returns only those in the air. */
