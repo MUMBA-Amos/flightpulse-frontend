@@ -3,7 +3,7 @@
 .intro {
   position: relative;
   overflow: hidden;
-  height: 240px;
+  min-height: 240px;
   border-bottom: 1px solid var(--border);
 
   &__globe {
@@ -26,7 +26,7 @@
     position: relative;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 48px var(--gutter) 0;
+    padding: 48px var(--gutter) 28px;
 
     h1 {
       margin: 0 0 10px;
@@ -36,6 +36,13 @@
     }
 
     .muted { max-width: 30rem; font-size: 0.95rem; line-height: 1.6; }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
   }
 }
 
@@ -53,6 +60,11 @@
   font-family: var(--mono);
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+.refresh {
+  padding: 6px 12px;
+  font-size: 0.8rem;
 }
 
 .content {
@@ -156,10 +168,9 @@
 }
 
 @media (max-width: 520px) {
-  .updated { display: none; }
   .tile { padding: 12px 14px; }
   .tile__value { font-size: 1.3rem; }
-  .intro { height: 200px; }
+  .intro { min-height: 200px; }
   .intro__text { padding-top: 32px; }
   .panels { padding: 14px; }
 }

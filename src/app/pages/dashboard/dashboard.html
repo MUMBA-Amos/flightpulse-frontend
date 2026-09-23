@@ -1,12 +1,4 @@
-<app-site-nav>
-  <span class="updated">Refreshed {{ lastRefresh().toLocaleTimeString() }}</span>
-  <button type="button" class="btn" (click)="refresh()" [disabled]="stats.isLoading()">
-    <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
-    </svg>
-    {{ stats.isLoading() ? 'Refreshing…' : 'Refresh' }}
-  </button>
-</app-site-nav>
+<app-site-nav />
 
 <section class="intro" aria-labelledby="dashboard-title">
   <app-globe class="intro__globe" [aircraft]="globeAircraft()" />
@@ -15,6 +7,15 @@
     <p class="kicker">Dashboard</p>
     <h1 id="dashboard-title">Today in the sky</h1>
     <p class="muted">Flights, delays, airlines, airports and the planes in the air right now, all in one place.</p>
+    <div class="intro__meta">
+      <span class="updated">Updated {{ lastRefresh() | date: 'h:mm a' }}</span>
+      <button type="button" class="btn btn--ghost refresh" (click)="refresh()" [disabled]="stats.isLoading()">
+        <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
+        </svg>
+        {{ stats.isLoading() ? 'Refreshing…' : 'Refresh' }}
+      </button>
+    </div>
   </div>
 </section>
 

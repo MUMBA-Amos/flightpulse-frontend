@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, effect, inject, input, linkedSignal, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
@@ -31,7 +31,7 @@ const PLANE_ICON =
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel, SiteNav],
+  imports: [DatePipe, DecimalPipe, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel, SiteNav],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   host: { class: 'page' },
