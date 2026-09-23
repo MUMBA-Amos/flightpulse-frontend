@@ -12,6 +12,16 @@
   </div>
 </header>
 
+<section class="intro" aria-labelledby="dashboard-title">
+  <app-globe class="intro__globe" [aircraft]="globeAircraft()" />
+  <div class="intro__veil" aria-hidden="true"></div>
+  <div class="intro__text">
+    <p class="kicker">Dashboard</p>
+    <h1 id="dashboard-title">Today in the sky</h1>
+    <p class="muted">Flights, delays, airlines, airports and the planes in the air right now, all in one place.</p>
+  </div>
+</section>
+
 <main class="content">
   <div class="tiles" role="tablist" aria-label="Sections">
     @for (tab of tabs; track tab.id) {
@@ -24,7 +34,12 @@
         [attr.aria-controls]="'panel-' + tab.id"
         (click)="select(tab.id)"
       >
-        <span class="tile__label">{{ tab.label }}</span>
+        <span class="tile__top">
+          <span class="tile__label">{{ tab.label }}</span>
+          <svg class="tile__icon" [class.tile__icon--filled]="tab.filled" viewBox="0 0 24 24" aria-hidden="true">
+            <path [attr.d]="tab.icon" [attr.transform]="tab.filled ? 'rotate(45 12 12)' : null" />
+          </svg>
+        </span>
         <span class="tile__value">
           @if (statValue(tab); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { — }
         </span>
@@ -40,21 +55,23 @@
     </p>
   }
 
-  @if (visited().has('flights') || activeTab() === 'flights') {
-    <app-flights-panel id="panel-flights" role="tabpanel" [hidden]="activeTab() !== 'flights'" />
-  }
-  @if (visited().has('airlines') || activeTab() === 'airlines') {
-    <app-airlines-panel id="panel-airlines" role="tabpanel" [hidden]="activeTab() !== 'airlines'" />
-  }
-  @if (visited().has('airports') || activeTab() === 'airports') {
-    <app-airports-panel id="panel-airports" role="tabpanel" [hidden]="activeTab() !== 'airports'" />
-  }
-  @if (visited().has('aircraft') || activeTab() === 'aircraft') {
-    <app-aircraft-panel
-      id="panel-aircraft"
-      role="tabpanel"
-      [hidden]="activeTab() !== 'aircraft'"
-      [total]="stats.hasValue() ? stats.value().total_aircraft : null"
-    />
-  }
+  <div class="panels">
+    @if (visited().has('flights') || activeTab() === 'flights') {
+      <app-flights-panel id="panel-flights" role="tabpanel" [hidden]="activeTab() !== 'flights'" />
+    }
+    @if (visited().has('airlines') || activeTab() === 'airlines') {
+      <app-airlines-panel id="panel-airlines" role="tabpanel" [hidden]="activeTab() !== 'airlines'" />
+    }
+    @if (visited().has('airports') || activeTab() === 'airports') {
+      <app-airports-panel id="panel-airports" role="tabpanel" [hidden]="activeTab() !== 'airports'" />
+    }
+    @if (visited().has('aircraft') || activeTab() === 'aircraft') {
+      <app-aircraft-panel
+        id="panel-aircraft"
+        role="tabpanel"
+        [hidden]="activeTab() !== 'aircraft'"
+        [total]="stats.hasValue() ? stats.value().total_aircraft : null"
+      />
+    }
+  </div>
 </main>

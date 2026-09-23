@@ -1,6 +1,84 @@
 :host {
   display: block;
   min-height: 100vh;
+  // Soft glows plus a faint dot grid that fades out down the page.
+  background:
+    radial-gradient(900px 420px at 85% 0%, rgba(245, 184, 61, 0.08), transparent 65%),
+    radial-gradient(700px 500px at 0% 30%, rgba(57, 135, 229, 0.08), transparent 70%),
+    var(--bg);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+  }
+
+  > * { position: relative; }
+}
+
+// ---------- Header banner ----------
+
+.intro {
+  position: relative;
+  overflow: hidden;
+  height: 240px;
+  border-bottom: 1px solid var(--border);
+
+  &__globe {
+    position: absolute;
+    inset: 0;
+    opacity: 0.85;
+  }
+
+  // Keeps the text readable over the globe.
+  &__veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, var(--bg) 0%, rgba(7, 11, 18, 0.85) 35%, rgba(7, 11, 18, 0) 65%),
+      linear-gradient(0deg, rgba(7, 11, 18, 0.9) 0%, rgba(7, 11, 18, 0) 45%);
+  }
+
+  &__text {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px clamp(16px, 4vw, 40px) 0;
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .muted { max-width: 30rem; font-size: 0.95rem; line-height: 1.6; }
+  }
+}
+
+.kicker {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+// ---------- Tables ----------
+
+.panels {
+  padding: 20px 22px 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(14, 21, 34, 0.72);
+  box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.8);
 }
 
 .topbar {
@@ -87,6 +165,36 @@
     font-size: 0.72rem;
     color: var(--text-muted);
   }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-self: stretch;
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+    box-sizing: content-box;
+    border-radius: 8px;
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    background: rgba(148, 163, 184, 0.08);
+
+    &--filled { fill: var(--text-muted); stroke: none; }
+  }
+
+  &--active &__icon {
+    stroke: var(--accent);
+    background: var(--accent-soft);
+
+    &--filled { fill: var(--accent); }
+  }
 }
 
 .stats-error {
@@ -103,4 +211,7 @@
   .updated { display: none; }
   .tile { padding: 12px 14px; }
   .tile__value { font-size: 1.3rem; }
+  .intro { height: 200px; }
+  .intro__text { padding-top: 32px; }
+  .panels { padding: 14px; }
 }

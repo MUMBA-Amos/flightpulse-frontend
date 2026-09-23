@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, effect, inject, input, linkedSignal, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, input, linkedSignal, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { FlightPulseStats } from '../../models/stats.model';
@@ -10,6 +10,7 @@ import { FlightsPanel } from '../../panels/flights-panel/flights-panel';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { RefreshService, reloadOnRefresh } from '../../services/refresh.service';
 import { Brand } from '../../shared/brand';
+import { Globe } from '../landing/globe/globe';
 
 type TabId = 'flights' | 'airlines' | 'airports' | 'aircraft';
 
@@ -19,11 +20,18 @@ interface Tab {
   statKey: keyof FlightPulseStats;
   /** What the count covers, shown under the number. */
   hint: string;
+  /** SVG path for the tile's icon (24×24). */
+  icon: string;
+  /** Filled shape rather than an outline. */
+  filled?: boolean;
 }
+
+const PLANE_ICON =
+  'M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe, Brand, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel],
+  imports: [DecimalPipe, Brand, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -32,13 +40,16 @@ export class Dashboard {
   private readonly refresher = inject(RefreshService);
 
   protected readonly tabs: Tab[] = [
-    { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: "Today's snapshot" },
-    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: "Today's snapshot" },
-    { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: "Today's snapshot" },
-    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide, updated every 30 min' },
+    { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: "Today's snapshot", icon: PLANE_ICON, filled: true },
+    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: "Today's snapshot", icon: 'M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 10h.01M12 10h.01M16 10h.01' },
+    { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: "Today's snapshot", icon: 'M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z' },
+    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide, updated every 30 min', icon: 'M12 12l6.5-6.5M21 12a9 9 0 1 1-9-9M17 12a5 5 0 1 1-5-5' },
   ];
 
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
+  /** Planes in the air, for the decorative globe in the header. */
+  private readonly airborne = rxResource({ stream: () => this.api.getAircraft(true) });
+  protected readonly globeAircraft = computed(() => (this.airborne.hasValue() ? this.airborne.value() : []));
   /** Optional `?tab=` query param, e.g. /dashboard?tab=aircraft */
   readonly tab = input<string>();
 
