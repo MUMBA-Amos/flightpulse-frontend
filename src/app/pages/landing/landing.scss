@@ -625,19 +625,6 @@
   &__wx { flex-basis: 100%; margin-top: -2px; }
 }
 
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 24px clamp(16px, 5vw, 64px) 40px;
-  border-top: 1px solid var(--border);
-
-  p { margin: 0; }
-}
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(16px); }

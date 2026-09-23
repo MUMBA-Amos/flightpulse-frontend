@@ -4,7 +4,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { Metar } from '../models/weather.model';
 import { WeatherService, WeatherState } from '../services/weather.service';
 import { WeatherIcon } from './weather-icon';
-import { describeWx, weatherKind, wind } from './weather-format';
+import { describeWx, flyingConditions, weatherKind, wind } from './weather-format';
 
 /** Compact live-weather line for an airport, from its latest METAR. */
 @Component({
@@ -15,7 +15,7 @@ import { describeWx, weatherKind, wind } from './weather-format';
         <span class="wx wx--muted">Loading weather…</span>
       }
       @case ('none') {
-        <span class="wx wx--muted">No recent METAR</span>
+        <span class="wx wx--muted">No recent weather</span>
       }
       @case ('error') {
         <span class="wx wx--muted">Weather unavailable</span>
@@ -27,8 +27,8 @@ import { describeWx, weatherKind, wind } from './weather-format';
             @if (m.temp != null) {
               <span class="wx__temp">{{ m.temp | number: '1.0-0' }}°C</span>
             }
-            @if (m.fltCat) {
-              <span class="wx__cat wx__cat--{{ m.fltCat.toLowerCase() }}">{{ m.fltCat }}</span>
+            @if (m.fltCat && rating()) {
+              <span class="wx__cat wx__cat--{{ m.fltCat.toLowerCase() }}" title="Flying conditions">{{ rating() }}</span>
             }
             @if (windText(); as w) {
               <span class="wx__sep">{{ w }}</span>
@@ -102,12 +102,13 @@ export class WeatherBadge {
   });
 
   protected readonly conditions = computed(() => describeWx(this.metar()?.wxString));
+  protected readonly rating = computed(() => flyingConditions(this.metar()?.fltCat));
 
   protected readonly tooltip = computed(() => {
     const m = this.metar();
     if (!m) return null;
     const observed = m.obsTime ? `Observed ${new Date(m.obsTime * 1000).toLocaleString()}\n` : '';
-    return `${m.name ?? m.icaoId}\n${observed}${m.rawOb}`;
+    return `${m.name ?? m.icaoId}\n${observed}`.trim();
   });
 
   protected readonly summary = computed(() => {
@@ -115,7 +116,7 @@ export class WeatherBadge {
     if (!m) return null;
     return [
       `Weather at ${m.name ?? m.icaoId}`,
-      m.fltCat,
+      this.rating() ? `flying conditions ${this.rating()!.toLowerCase()}` : null,
       m.temp != null ? `${Math.round(m.temp)} degrees Celsius` : null,
       this.windText() ? `wind ${this.windText()}` : null,
       this.conditions(),

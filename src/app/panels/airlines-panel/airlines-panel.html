@@ -10,7 +10,7 @@
 } @else if (!airlines.hasValue()) {
   <app-state-notice kind="loading" message="Loading airline performance…" />
 } @else if (all().length === 0) {
-  <app-state-notice message="The API returned no airlines." />
+  <app-state-notice message="No airlines to show right now." />
 } @else {
   <div class="table-wrap" [class.stale]="airlines.isLoading()">
     <table class="data-table">
@@ -18,10 +18,10 @@
         <tr>
           <th>Airline</th>
           <th>Flights</th>
-          <th class="num">Delayed dep.</th>
-          <th class="num">Avg dep. delay</th>
-          <th class="num hide-sm">Delayed arr.</th>
-          <th class="num hide-sm">Avg arr. delay</th>
+          <th class="num">Late departures</th>
+          <th class="num">Avg. departure delay</th>
+          <th class="num hide-sm">Late arrivals</th>
+          <th class="num hide-sm">Avg. arrival delay</th>
         </tr>
       </thead>
       <tbody>

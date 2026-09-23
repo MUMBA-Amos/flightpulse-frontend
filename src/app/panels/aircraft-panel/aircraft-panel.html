@@ -14,7 +14,7 @@
     <span class="visually-hidden">Search aircraft</span>
     <input
       type="search"
-      placeholder="Search callsign, ICAO24, country or squawk"
+      placeholder="Search flight number or country"
       [value]="query()"
       (input)="onSearch($event)"
     />
@@ -43,7 +43,7 @@
 } @else if (!aircraft.hasValue()) {
   <app-state-notice kind="loading" message="Loading aircraft positions…" />
 } @else if (all().length === 0) {
-  <app-state-notice message="The API returned no aircraft." />
+  <app-state-notice message="No aircraft to show right now." />
 } @else if (filtered().length === 0) {
   <app-state-notice message="No aircraft match the current filters." actionLabel="Reset filters" (action)="query.set(''); groundFilter.set('all')" />
 } @else {
@@ -51,13 +51,12 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>Callsign</th>
-          <th class="hide-sm">Country</th>
+          <th>Flight</th>
           <th class="num">Altitude</th>
           <th class="num">Speed</th>
-          <th>Heading</th>
-          <th class="hide-sm">Vertical</th>
-          <th>State</th>
+          <th>Direction</th>
+          <th class="hide-sm">Climb</th>
+          <th>Status</th>
           <th class="hide-sm">Last seen</th>
         </tr>
       </thead>
@@ -67,15 +66,14 @@
             <td>
               <div class="stack">
                 <span class="code">{{ callsign(a) }}</span>
-                <span class="muted mono">{{ a.icao24 }}</span>
+                <span class="muted">{{ a.origin_country ?? '—' }}</span>
               </div>
             </td>
-            <td class="hide-sm">{{ a.origin_country ?? '—' }}</td>
             <td class="num">
               @if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <span class="unit">ft</span> } @else { — }
             </td>
             <td class="num">
-              @if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} <span class="unit">kt</span> } @else { — }
+              @if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <span class="unit">km/h</span> } @else { — }
             </td>
             <td>
               @if (a.true_track != null) {
@@ -83,7 +81,7 @@
                   <svg viewBox="0 0 24 24" aria-hidden="true" [style.transform]="'rotate(' + a.true_track + 'deg)'">
                     <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
                   </svg>
-                  <span class="mono">{{ a.true_track | number: '3.0-0' }}°</span>
+                  <span class="mono">{{ compassPoint(a.true_track) }}</span>
                 </span>
               } @else {
                 —
@@ -97,7 +95,7 @@
               }
             </td>
             <td>
-              <span class="status" [class.status--active]="!a.on_ground">{{ a.on_ground ? 'On ground' : 'Airborne' }}</span>
+              <span class="status" [class.status--active]="!a.on_ground">{{ a.on_ground ? 'On the ground' : 'In the air' }}</span>
             </td>
             <td class="hide-sm mono muted">
               {{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '—' }}

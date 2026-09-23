@@ -34,7 +34,7 @@ import { Brand } from './brand';
 
       <div class="footer__base">
         <span>© {{ year }} FlightPulse</span>
-        <span>Positions are extrapolated between updates. Not for navigation or operational use.</span>
+        <span>Plane positions are estimated between updates. For information only, not for navigation.</span>
       </div>
     </footer>
   `,

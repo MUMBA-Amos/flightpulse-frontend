@@ -7,8 +7,9 @@ import { Flight } from '../../models/flight.model';
 import { FlightPulseStats } from '../../models/stats.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
-import { altitudeFt, callsign, climb, lastSeen, speedKt } from '../../shared/aircraft-format';
+import { altitudeFt, callsign, climb, lastSeen, speedKmh } from '../../shared/aircraft-format';
 import { Brand } from '../../shared/brand';
+import { compassPoint } from '../../shared/compass';
 import { describeHttpError } from '../../shared/http-error';
 import { WeatherBadge } from '../../shared/weather-badge';
 import { airportsByActivity } from '../../shared/weather-airports';
@@ -77,7 +78,8 @@ export class Landing {
 
   protected readonly callsign = callsign;
   protected readonly altitudeFt = altitudeFt;
-  protected readonly speedKt = speedKt;
+  protected readonly speedKmh = speedKmh;
+  protected readonly compassPoint = compassPoint;
   protected readonly climb = climb;
   protected readonly lastSeen = lastSeen;
 

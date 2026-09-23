@@ -10,7 +10,7 @@
   <main class="hero">
     <p class="eyebrow">
       <span class="eyebrow__dot" aria-hidden="true"></span>
-      Live data from OpenSky &amp; Aviationstack
+      Live flight tracking
     </p>
 
     <h1>Every flight,<br /><span class="hero__accent">one pulse.</span></h1>
@@ -59,8 +59,7 @@
     <p class="kicker">Airport weather</p>
     <h2 id="weather-title">Conditions on the ground</h2>
     <p class="muted">
-      Latest METAR observations from the Aviation Weather Center for the busiest airports in today's flights.
-      Hover the raw report to read it in full.
+      Current weather at the busiest airports in today's flights.
     </p>
   </div>
 
@@ -72,7 +71,7 @@
   } @else if (!flights.hasValue()) {
     <div class="delays__empty"><span class="loader" aria-hidden="true"></span><p>Loading airports…</p></div>
   } @else if (weatherAirports().length === 0) {
-    <div class="delays__empty"><p>No airports with an ICAO code in the current flights.</p></div>
+    <div class="delays__empty"><p>No airport weather to show right now.</p></div>
   } @else {
     <ul class="weather__grid">
       @for (a of weatherAirports(); track a.icao) {
@@ -92,8 +91,8 @@
     <p class="kicker">Live tracking</p>
     <h2 id="tracking-title">Lock on to any aircraft</h2>
     <p class="muted">
-      Pick an aircraft from the list or click one on the globe to follow it. Positions come from the latest
-      OpenSky snapshot; motion is extrapolated from each aircraft's heading and speed.
+      Pick a plane from the list, or click one on the globe, to follow it. Positions refresh every 30 minutes,
+      and planes keep moving in between based on their speed and direction.
     </p>
   </div>
 
@@ -113,7 +112,7 @@
           <div class="detail__head">
             <div>
               <span class="detail__callsign">{{ callsign(a) }}</span>
-              <span class="muted">{{ a.origin_country ?? 'Unknown country' }} · {{ a.icao24 }}</span>
+              <span class="muted">{{ a.origin_country ?? 'Unknown country' }}</span>
             </div>
             <button type="button" class="detail__close" (click)="selectedId.set(null)" aria-label="Stop tracking">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
@@ -133,11 +132,11 @@
                 <span class="muted">{{ route.value().destination!.city ?? route.value().destination!.name }}</span>
               </div>
             } @else {
-              <span class="muted">Route unknown for this callsign</span>
+              <span class="muted">Route not available for this flight</span>
             }
           </div>
           @if (route.hasValue() && route.value().source === 'adsbdb') {
-            <p class="route__note">Usual route for this callsign</p>
+            <p class="route__note">Usual route for this flight number</p>
           }
           <dl class="detail__grid">
             <div>
@@ -146,21 +145,17 @@
             </div>
             <div>
               <dt>Speed</dt>
-              <dd>@if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} <small>kt</small> } @else { — }</dd>
+              <dd>@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <small>km/h</small> } @else { — }</dd>
             </div>
             <div>
-              <dt>Heading</dt>
-              <dd>@if (a.true_track != null) { {{ a.true_track | number: '3.0-0' }}° } @else { — }</dd>
+              <dt>Direction</dt>
+              <dd>@if (a.true_track != null) { {{ compassPoint(a.true_track) }} } @else { — }</dd>
             </div>
             <div>
-              <dt>Vertical</dt>
+              <dt>Climb</dt>
               <dd>
                 @if (climb(a); as c) { <span class="climb climb--{{ c.tone }}">{{ c.label }}</span> } @else { — }
               </dd>
-            </div>
-            <div>
-              <dt>Squawk</dt>
-              <dd>{{ a.squawk ?? '—' }}</dd>
             </div>
             <div>
               <dt>Last seen</dt>
@@ -175,7 +170,7 @@
 
     <aside class="tracker" aria-label="Airborne aircraft">
       <div class="tracker__head">
-        <h3>Airborne now</h3>
+        <h3>In the air now</h3>
         @if (aircraft.hasValue()) {
           <span class="muted mono">{{ trackList().length }} of {{ airborne().length }}</span>
         }
@@ -187,7 +182,7 @@
           <path d="m20 20-3.5-3.5" />
         </svg>
         <span class="visually-hidden">Search aircraft</span>
-        <input type="search" placeholder="Callsign, ICAO24 or country" [value]="query()" (input)="onSearch($event)" />
+        <input type="search" placeholder="Flight number or country" [value]="query()" (input)="onSearch($event)" />
       </label>
 
       @if (aircraft.error()) {
@@ -217,7 +212,7 @@
                 </span>
                 <span class="track__stats mono">
                   <span>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} ft } @else { — }</span>
-                  <span class="muted">@if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} kt } @else { — }</span>
+                  <span class="muted">@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} km/h } @else { — }</span>
                 </span>
               </button>
             </li>
@@ -294,7 +289,3 @@
   }
 </section>
 
-<footer class="footer">
-  <app-brand />
-  <p class="muted">Data from OpenSky Network and Aviationstack, processed in Databricks.</p>
-</footer>

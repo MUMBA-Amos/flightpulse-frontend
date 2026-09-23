@@ -5,7 +5,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { AircraftState } from '../../models/aircraft.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
-import { altitudeFt, callsign, climb, lastSeen, speedKt } from '../../shared/aircraft-format';
+import { altitudeFt, callsign, climb, lastSeen, speedKmh } from '../../shared/aircraft-format';
+import { compassPoint } from '../../shared/compass';
 import { describeHttpError } from '../../shared/http-error';
 import { StateNotice } from '../../shared/state-notice';
 
@@ -28,8 +29,8 @@ export class AircraftPanel {
   protected readonly groundFilter = signal<GroundFilter>('all');
   protected readonly filters: { id: GroundFilter; label: string }[] = [
     { id: 'all', label: 'All' },
-    { id: 'airborne', label: 'Airborne' },
-    { id: 'ground', label: 'On ground' },
+    { id: 'airborne', label: 'In the air' },
+    { id: 'ground', label: 'On the ground' },
   ];
 
   protected readonly all = computed(() => (this.aircraft.hasValue() ? this.aircraft.value() : []));
@@ -62,7 +63,8 @@ export class AircraftPanel {
 
   protected readonly callsign = callsign;
   protected readonly altitudeFt = altitudeFt;
-  protected readonly speedKt = speedKt;
+  protected readonly speedKmh = speedKmh;
+  protected readonly compassPoint = compassPoint;
   protected readonly climb = climb;
   protected readonly lastSeen = lastSeen;
 }

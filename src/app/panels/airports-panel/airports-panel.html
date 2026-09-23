@@ -14,14 +14,14 @@
 } @else if (!airports.hasValue()) {
   <app-state-notice kind="loading" message="Loading airport activity…" />
 } @else if (all().length === 0) {
-  <app-state-notice message="The API returned no airports." />
+  <app-state-notice message="No airports to show right now." />
 } @else {
   <div class="table-wrap" [class.stale]="airports.isLoading()">
     <table class="data-table">
       <thead>
         <tr>
           <th>Airport</th>
-          <th>Activity</th>
+          <th>Total flights</th>
           <th class="num">Departures</th>
           <th class="num">Arrivals</th>
         </tr>

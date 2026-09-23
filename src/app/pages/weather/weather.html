@@ -11,8 +11,7 @@
     <p class="kicker">Airport weather</p>
     <h1>Conditions on the ground</h1>
     <p class="muted">
-      Latest METAR observations from the Aviation Weather Center for every airport in today's flights,
-      busiest first. Hover the raw report to read it in full.
+      Current weather at every airport in today's flights, busiest first.
     </p>
   </div>
 
@@ -21,7 +20,7 @@
   } @else if (!flights.hasValue()) {
     <app-state-notice kind="loading" message="Loading airports…" />
   } @else if (airports().length === 0) {
-    <app-state-notice message="No airports with an ICAO code in the current flights." />
+    <app-state-notice message="No airport weather to show right now." />
   } @else {
     <div class="toolbar">
       <label class="search">
@@ -30,7 +29,7 @@
           <path d="m20 20-3.5-3.5" />
         </svg>
         <span class="visually-hidden">Search airports</span>
-        <input type="search" placeholder="Airport name, IATA or ICAO" [value]="query()" (input)="onSearch($event)" />
+        <input type="search" placeholder="Airport name or code" [value]="query()" (input)="onSearch($event)" />
       </label>
       <span class="muted mono">{{ filtered().length }} of {{ airports().length }} airports</span>
     </div>

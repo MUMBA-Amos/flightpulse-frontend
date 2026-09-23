@@ -1,7 +1,7 @@
 import { AircraftState } from '../models/aircraft.model';
 
 const FEET_PER_METRE = 3.28084;
-const KNOTS_PER_MPS = 1.94384;
+const KMH_PER_MPS = 3.6;
 const FPM_PER_MPS = 196.85;
 
 export interface Climb {
@@ -19,18 +19,16 @@ export function altitudeFt(a: AircraftState): number | null {
   return metres == null ? null : metres * FEET_PER_METRE;
 }
 
-/** Ground speed in knots. */
-export function speedKt(a: AircraftState): number | null {
-  return a.velocity == null ? null : a.velocity * KNOTS_PER_MPS;
+/** Ground speed in km/h. */
+export function speedKmh(a: AircraftState): number | null {
+  return a.velocity == null ? null : a.velocity * KMH_PER_MPS;
 }
 
 export function climb(a: AircraftState): Climb | null {
   if (a.vertical_rate == null) return null;
   const fpm = Math.round(a.vertical_rate * FPM_PER_MPS);
   if (Math.abs(fpm) < 100) return { label: 'Level', tone: 'level' };
-  return fpm > 0
-    ? { label: `▲ ${fpm.toLocaleString()} ft/min`, tone: 'up' }
-    : { label: `▼ ${Math.abs(fpm).toLocaleString()} ft/min`, tone: 'down' };
+  return fpm > 0 ? { label: '▲ Climbing', tone: 'up' } : { label: '▼ Descending', tone: 'down' };
 }
 
 export function lastSeen(a: AircraftState): Date | null {

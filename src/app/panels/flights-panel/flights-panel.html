@@ -32,7 +32,7 @@
 } @else if (!flights.hasValue()) {
   <app-state-notice kind="loading" message="Loading flights…" />
 } @else if (all().length === 0) {
-  <app-state-notice message="The API returned no flights." />
+  <app-state-notice message="No flights to show right now." />
 } @else if (filtered().length === 0) {
   <app-state-notice [message]="'No flights match “' + query() + '”.'" actionLabel="Clear search" (action)="query.set('')" />
 } @else {

@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 
 import { WeatherService, WeatherState } from '../services/weather.service';
-import { describeWx, visibility, weatherKind, wind } from './weather-format';
+import { describeWx, flyingConditions, visibility, weatherKind, wind } from './weather-format';
 import { WeatherIcon } from './weather-icon';
 
 /** Larger weather card for one airport (landing page). */
@@ -17,7 +17,9 @@ import { WeatherIcon } from './weather-icon';
           <span class="card__name">{{ name() ?? icao() }}</span>
         </div>
         @if (metar()?.fltCat; as cat) {
-          <span class="cat cat--{{ cat.toLowerCase() }}">{{ cat }}</span>
+          @if (rating(); as r) {
+            <span class="cat cat--{{ cat.toLowerCase() }}" title="Flying conditions">{{ r }}</span>
+          }
         }
       </header>
 
@@ -26,7 +28,7 @@ import { WeatherIcon } from './weather-icon';
           <p class="card__note">Loading weather…</p>
         }
         @case ('none') {
-          <p class="card__note">No recent METAR for {{ icao() }}</p>
+          <p class="card__note">No recent weather report</p>
         }
         @case ('error') {
           <p class="card__note">Weather unavailable</p>
@@ -45,7 +47,6 @@ import { WeatherIcon } from './weather-icon';
               <div><dt>Visibility</dt><dd>{{ visibilityText() ?? '—' }}</dd></div>
               <div><dt>Observed</dt><dd>{{ observed() }}</dd></div>
             </dl>
-            <p class="card__raw" [attr.title]="m.rawOb">{{ m.rawOb }}</p>
           }
         }
       }
@@ -99,23 +100,14 @@ import { WeatherIcon } from './weather-icon';
       text-transform: uppercase;
       color: var(--text-muted);
     }
-    .card__facts dd { margin: 0; font-family: var(--mono); font-size: 0.8rem; white-space: nowrap; }
-    .card__raw {
-      margin: 12px 0 0;
-      overflow: hidden;
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: var(--text-muted);
-      opacity: 0.7;
-    }
+    .card__facts dd { margin: 0; font-family: var(--mono); font-size: 0.8rem; }
     .cat {
       padding: 2px 8px;
       border-radius: 5px;
       font-family: var(--mono);
       font-size: 0.7rem;
       font-weight: 700;
+      white-space: nowrap;
       color: var(--text-muted);
       background: rgba(148, 163, 184, 0.12);
     }
@@ -147,6 +139,7 @@ export class WeatherCard {
     if (!m) return '';
     return describeWx(m.wxString) ?? ({ clear: 'Clear', partly: 'Partly cloudy', cloudy: 'Cloudy' } as Record<string, string>)[this.kind()] ?? '';
   });
+  protected readonly rating = computed(() => flyingConditions(this.metar()?.fltCat));
   protected readonly windText = computed(() => {
     const m = this.metar();
     return m ? wind(m) : null;
