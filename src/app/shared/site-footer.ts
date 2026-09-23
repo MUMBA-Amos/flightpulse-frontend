@@ -20,7 +20,6 @@ import { Brand } from './brand';
           <a routerLink="/">Home</a>
           <a routerLink="/dashboard">Dashboard</a>
           <a routerLink="/weather">Airport weather</a>
-          <a href="/api/docs" target="_blank" rel="noopener">API docs</a>
         </nav>
 
         <div class="footer__col">
