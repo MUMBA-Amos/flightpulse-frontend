@@ -28,7 +28,7 @@ export class Landing {
   private readonly api = inject(FlightPulseApi);
 
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
-  protected readonly aircraft = rxResource({ stream: () => this.api.getAircraft() });
+  protected readonly aircraft = rxResource({ stream: () => this.api.getAircraft(true) });
   protected readonly delayed = rxResource({ stream: () => this.api.getDelayedFlights() });
   protected readonly flights = rxResource({ stream: () => this.api.getFlights() });
 

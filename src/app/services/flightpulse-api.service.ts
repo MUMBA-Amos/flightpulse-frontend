@@ -43,8 +43,10 @@ export class FlightPulseApi {
     return this.http.get<WeatherResponse>(`${this.baseUrl}/weather/${encodeURIComponent(icao)}`);
   }
 
-  getAircraft(): Observable<AircraftState[]> {
-    return this.http.get<AircraftState[]>(`${this.baseUrl}/aircraft/`);
+  /** The 500 most recently seen aircraft; `airborne: true` returns only those in the air. */
+  getAircraft(airborne?: boolean): Observable<AircraftState[]> {
+    const params: Record<string, string> = airborne === undefined ? {} : { airborne: String(airborne) };
+    return this.http.get<AircraftState[]>(`${this.baseUrl}/aircraft/`, { params });
   }
 
   /** Origin and destination for a callsign (all null when unknown). */

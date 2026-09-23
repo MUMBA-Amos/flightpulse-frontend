@@ -28,6 +28,7 @@
         <span class="tile__value">
           @if (statValue(tab); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { — }
         </span>
+        <span class="tile__hint">{{ tab.hint }}</span>
       </button>
     }
   </div>

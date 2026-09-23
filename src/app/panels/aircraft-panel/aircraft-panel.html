@@ -1,7 +1,10 @@
 <div class="panel-head">
   <div>
     <h2>Live aircraft</h2>
-    <p class="muted">Latest OpenSky position reports.</p>
+    <p class="muted">
+      Every aircraft broadcasting its position worldwide, from the OpenSky Network, updated every 30 minutes.
+      The list shows the 500 most recently seen.
+    </p>
   </div>
 </div>
 
@@ -32,7 +35,7 @@
     <span class="toolbar__meta">
       {{ filtered().length }} of {{ all().length }}
       @if (total(); as total) {
-        <span class="muted"> (sample of {{ total | number }})</span>
+        <span class="muted"> · newest of {{ total | number }} worldwide</span>
       }
     </span>
   }

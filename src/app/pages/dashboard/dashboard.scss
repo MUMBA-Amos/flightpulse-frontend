@@ -82,6 +82,11 @@
     font-size: 1.6rem;
     font-weight: 600;
   }
+
+  &__hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
 }
 
 .stats-error {

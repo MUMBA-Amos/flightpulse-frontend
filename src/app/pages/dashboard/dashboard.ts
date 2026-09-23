@@ -17,6 +17,8 @@ interface Tab {
   id: TabId;
   label: string;
   statKey: keyof FlightPulseStats;
+  /** What the count covers, shown under the number. */
+  hint: string;
 }
 
 @Component({
@@ -30,10 +32,10 @@ export class Dashboard {
   private readonly refresher = inject(RefreshService);
 
   protected readonly tabs: Tab[] = [
-    { id: 'flights', label: 'Flights', statKey: 'total_flights' },
-    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines' },
-    { id: 'airports', label: 'Airports', statKey: 'total_airports' },
-    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft' },
+    { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: 'Daily sample' },
+    { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: 'In the daily sample' },
+    { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: 'In the daily sample' },
+    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide · every 30 min' },
   ];
 
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
