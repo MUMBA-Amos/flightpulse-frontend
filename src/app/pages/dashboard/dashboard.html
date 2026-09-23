@@ -1,16 +1,12 @@
-<header class="topbar">
-  <app-brand />
-
-  <div class="topbar__actions">
-    <span class="updated">Refreshed {{ lastRefresh().toLocaleTimeString() }}</span>
-    <button type="button" class="btn" (click)="refresh()" [disabled]="stats.isLoading()">
-      <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
-      </svg>
-      {{ stats.isLoading() ? 'Refreshing…' : 'Refresh' }}
-    </button>
-  </div>
-</header>
+<app-site-nav class="topbar">
+  <span class="updated">Refreshed {{ lastRefresh().toLocaleTimeString() }}</span>
+  <button type="button" class="btn" (click)="refresh()" [disabled]="stats.isLoading()">
+    <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
+    </svg>
+    {{ stats.isLoading() ? 'Refreshing…' : 'Refresh' }}
+  </button>
+</app-site-nav>
 
 <section class="intro" aria-labelledby="dashboard-title">
   <app-globe class="intro__globe" [aircraft]="globeAircraft()" />

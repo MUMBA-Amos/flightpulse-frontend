@@ -1,0 +1,161 @@
+import { Component, booleanAttribute, input, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+import { Brand } from './brand';
+
+/**
+ * Site-wide navigation bar: logo, page links and any page-specific actions
+ * passed as content (e.g. the dashboard's Refresh button). On narrow screens
+ * the links fold into a menu.
+ *
+ * `overlay`: transparent, for sitting on top of the home page's hero globe.
+ */
+@Component({
+  selector: 'app-site-nav',
+  imports: [RouterLink, RouterLinkActive, Brand],
+  template: `
+    <header class="nav" [class.nav--overlay]="overlay()">
+      <app-brand />
+
+      <nav class="nav__links" [class.nav__links--open]="menuOpen()" aria-label="Main">
+        @for (link of links; track link.path) {
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="nav__link--active"
+            [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+            ariaCurrentWhenActive="page"
+            class="nav__link"
+            (click)="menuOpen.set(false)"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="nav__actions">
+        <ng-content />
+        <button
+          type="button"
+          class="nav__menu"
+          [attr.aria-expanded]="menuOpen()"
+          aria-label="Menu"
+          (click)="menuOpen.set(!menuOpen())"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            @if (menuOpen()) {
+              <path d="M6 6l12 12M18 6 6 18" />
+            } @else {
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            }
+          </svg>
+        </button>
+      </div>
+    </header>
+  `,
+  styles: `
+    :host { display: block; }
+
+    .nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 14px clamp(16px, 4vw, 40px);
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 12, 20, 0.85);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav--overlay {
+      padding: 20px clamp(16px, 5vw, 64px);
+      border-bottom-color: transparent;
+      background: transparent;
+      backdrop-filter: none;
+    }
+
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: auto;
+    }
+
+    .nav__link {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+
+      &:hover { color: var(--text); background: rgba(148, 163, 184, 0.08); }
+      &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    .nav__link--active {
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.1);
+      box-shadow: inset 0 -2px 0 var(--accent);
+    }
+
+    .nav__actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav__menu {
+      display: none;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      color: var(--text);
+      background: rgba(14, 21, 34, 0.6);
+      cursor: pointer;
+
+      svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+      &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    }
+
+    @media (max-width: 720px) {
+      .nav { justify-content: space-between; }
+      .nav__menu { display: grid; }
+
+      .nav__links {
+        position: absolute;
+        top: 100%;
+        right: clamp(16px, 4vw, 40px);
+        left: clamp(16px, 4vw, 40px);
+        z-index: 20;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        margin: 6px 0 0;
+        padding: 8px;
+        border: 1px solid var(--border-strong);
+        border-radius: 12px;
+        background: #0a101c;
+        box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+      }
+
+      .nav__links--open { display: flex; }
+      .nav__link { padding: 12px 14px; }
+      .nav__link--active { box-shadow: inset 3px 0 0 var(--accent); }
+    }
+  `,
+})
+export class SiteNav {
+  /** Transparent, for sitting over the home page's hero. */
+  readonly overlay = input(false, { transform: booleanAttribute });
+
+  protected readonly menuOpen = signal(false);
+  protected readonly links = [
+    { path: '/', label: 'Home' },
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/weather', label: 'Weather' },
+  ];
+}

@@ -9,7 +9,7 @@ import { AirportsPanel } from '../../panels/airports-panel/airports-panel';
 import { FlightsPanel } from '../../panels/flights-panel/flights-panel';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { RefreshService, reloadOnRefresh } from '../../services/refresh.service';
-import { Brand } from '../../shared/brand';
+import { SiteNav } from '../../shared/site-nav';
 import { Globe } from '../landing/globe/globe';
 
 type TabId = 'flights' | 'airlines' | 'airports' | 'aircraft';
@@ -31,7 +31,7 @@ const PLANE_ICON =
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DecimalPipe, Brand, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel],
+  imports: [DecimalPipe, Globe, FlightsPanel, AirlinesPanel, AirportsPanel, AircraftPanel, SiteNav],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

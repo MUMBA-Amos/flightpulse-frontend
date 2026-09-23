@@ -1,14 +1,13 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 
 import { Metar } from '../../models/weather.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
 import { WeatherService, WeatherState } from '../../services/weather.service';
-import { Brand } from '../../shared/brand';
 import { describeHttpError } from '../../shared/http-error';
+import { SiteNav } from '../../shared/site-nav';
 import { StateNotice } from '../../shared/state-notice';
 import { WeatherAirport, airportsByActivity } from '../../shared/weather-airports';
 import { WeatherCard } from '../../shared/weather-card';
@@ -34,7 +33,7 @@ interface Extreme {
 /** Weather for every airport in the current flights, busiest first. */
 @Component({
   selector: 'app-weather',
-  imports: [DecimalPipe, RouterLink, Brand, StateNotice, WeatherCard, WeatherIcon],
+  imports: [DecimalPipe, StateNotice, WeatherCard, WeatherIcon, SiteNav],
   templateUrl: './weather.html',
   styleUrl: './weather.scss',
 })

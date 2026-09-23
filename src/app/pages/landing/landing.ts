@@ -8,9 +8,9 @@ import { FlightPulseStats } from '../../models/stats.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { reloadOnRefresh } from '../../services/refresh.service';
 import { altitudeFt, callsign, climb, lastSeen, speedKmh } from '../../shared/aircraft-format';
-import { Brand } from '../../shared/brand';
 import { compassPoint } from '../../shared/compass';
 import { describeHttpError } from '../../shared/http-error';
+import { SiteNav } from '../../shared/site-nav';
 import { WeatherBadge } from '../../shared/weather-badge';
 import { airportsByActivity } from '../../shared/weather-airports';
 import { WeatherCard } from '../../shared/weather-card';
@@ -21,7 +21,7 @@ const WEATHER_AIRPORTS = 8;
 
 @Component({
   selector: 'app-landing',
-  imports: [DatePipe, DecimalPipe, RouterLink, Brand, Globe, WeatherBadge, WeatherCard],
+  imports: [DatePipe, DecimalPipe, RouterLink, Globe, WeatherBadge, WeatherCard, SiteNav],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
 })
