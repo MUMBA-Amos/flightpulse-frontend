@@ -1,0 +1,48 @@
+<header class="topbar">
+  <app-brand />
+  <nav class="topbar__actions">
+    <a routerLink="/" class="btn btn--ghost">Home</a>
+    <a routerLink="/dashboard" class="btn btn--ghost">Dashboard</a>
+  </nav>
+</header>
+
+<main class="content">
+  <div class="head">
+    <p class="kicker">Airport weather</p>
+    <h1>Conditions on the ground</h1>
+    <p class="muted">
+      Latest METAR observations from the Aviation Weather Center for every airport in today's flights,
+      busiest first. Hover the raw report to read it in full.
+    </p>
+  </div>
+
+  @if (flights.error()) {
+    <app-state-notice kind="error" [message]="flightsError()" (action)="flights.reload()" />
+  } @else if (!flights.hasValue()) {
+    <app-state-notice kind="loading" message="Loading airports…" />
+  } @else if (airports().length === 0) {
+    <app-state-notice message="No airports with an ICAO code in the current flights." />
+  } @else {
+    <div class="toolbar">
+      <label class="search">
+        <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+        <span class="visually-hidden">Search airports</span>
+        <input type="search" placeholder="Airport name, IATA or ICAO" [value]="query()" (input)="onSearch($event)" />
+      </label>
+      <span class="muted mono">{{ filtered().length }} of {{ airports().length }} airports</span>
+    </div>
+
+    @if (filtered().length === 0) {
+      <app-state-notice [message]="'No airports match “' + query() + '”.'" />
+    } @else {
+      <ul class="grid">
+        @for (a of filtered(); track a.icao) {
+          <li><app-weather-card [icao]="a.icao" [iata]="a.iata" [name]="a.name" /></li>
+        }
+      </ul>
+    }
+  }
+</main>

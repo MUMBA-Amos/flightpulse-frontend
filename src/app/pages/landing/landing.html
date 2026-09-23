@@ -1,0 +1,280 @@
+<section class="hero-section">
+  <app-globe class="hero-section__globe" [aircraft]="aircraftList()" />
+  <div class="hero-section__veil" aria-hidden="true"></div>
+
+  <header class="nav">
+    <app-brand />
+    <a routerLink="/dashboard" class="btn btn--ghost">Dashboard</a>
+  </header>
+
+  <main class="hero">
+    <p class="eyebrow">
+      <span class="eyebrow__dot" aria-hidden="true"></span>
+      Live data from OpenSky &amp; Aviationstack
+    </p>
+
+    <h1>Every flight,<br /><span class="hero__accent">one pulse.</span></h1>
+
+    <p class="hero__lede">
+      FlightPulse brings flight schedules, airline performance and live aircraft positions
+      into one clear view of what's happening in the sky.
+    </p>
+
+    <div class="hero__cta">
+      <a routerLink="/dashboard" class="btn btn--lg">
+        Open dashboard
+        <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
+      <button type="button" class="btn btn--ghost btn--lg" (click)="scrollTo('tracking')">Track live aircraft</button>
+    </div>
+
+    @if (!stats.error()) {
+      <dl class="figures">
+        @for (f of figures; track f.key) {
+          <div class="figures__item">
+            <dt>{{ f.label }}</dt>
+            <dd>
+              @if (statValue(f.key); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { — }
+            </dd>
+          </div>
+        }
+        <div class="figures__item">
+          <dt>Delayed</dt>
+          <dd [class.warn]="delayedList().length > 0">
+            @if (delayed.hasValue()) { {{ delayedList().length | number }} } @else { — }
+          </dd>
+        </div>
+      </dl>
+    }
+  </main>
+
+  <button type="button" class="scroll-cue" (click)="scrollTo('weather')">
+    Explore
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+  </button>
+</section>
+
+<section class="weather" id="weather" aria-labelledby="weather-title">
+  <div class="tracking__head">
+    <p class="kicker">Airport weather</p>
+    <h2 id="weather-title">Conditions on the ground</h2>
+    <p class="muted">
+      Latest METAR observations from the Aviation Weather Center for the busiest airports in today's flights.
+      Hover the raw report to read it in full.
+    </p>
+  </div>
+
+  @if (flights.error()) {
+    <div class="delays__empty delays__empty--error" role="alert">
+      <p>{{ flightsError() }}</p>
+      <button type="button" class="btn btn--ghost" (click)="flights.reload()">Try again</button>
+    </div>
+  } @else if (!flights.hasValue()) {
+    <div class="delays__empty"><span class="loader" aria-hidden="true"></span><p>Loading airports…</p></div>
+  } @else if (weatherAirports().length === 0) {
+    <div class="delays__empty"><p>No airports with an ICAO code in the current flights.</p></div>
+  } @else {
+    <ul class="weather__grid">
+      @for (a of weatherAirports(); track a.icao) {
+        <li><app-weather-card [icao]="a.icao" [iata]="a.iata" [name]="a.name" /></li>
+      }
+    </ul>
+    @if (allWeatherAirports().length > weatherAirports().length) {
+      <div class="weather__more">
+        <a routerLink="/weather" class="btn btn--ghost">View all {{ allWeatherAirports().length }} airports</a>
+      </div>
+    }
+  }
+</section>
+
+<section class="tracking" id="tracking" aria-labelledby="tracking-title">
+  <div class="tracking__head">
+    <p class="kicker">Live tracking</p>
+    <h2 id="tracking-title">Lock on to any aircraft</h2>
+    <p class="muted">
+      Pick an aircraft from the list or click one on the globe to follow it. Positions come from the latest
+      OpenSky snapshot; motion is extrapolated from each aircraft's heading and speed.
+    </p>
+  </div>
+
+  <div class="tracking__grid">
+    <div class="tracking__stage">
+      <app-globe
+        class="tracking__globe"
+        layout="centered"
+        interactive
+        [aircraft]="aircraftList()"
+        [selected]="selectedId()"
+        (planeSelected)="selectedId.set($event)"
+      />
+
+      @if (selected(); as a) {
+        <div class="detail" aria-live="polite">
+          <div class="detail__head">
+            <div>
+              <span class="detail__callsign">{{ callsign(a) }}</span>
+              <span class="muted">{{ a.origin_country ?? 'Unknown country' }} · {{ a.icao24 }}</span>
+            </div>
+            <button type="button" class="detail__close" (click)="selectedId.set(null)" aria-label="Stop tracking">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+            </button>
+          </div>
+          <dl class="detail__grid">
+            <div>
+              <dt>Altitude</dt>
+              <dd>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <small>ft</small> } @else { — }</dd>
+            </div>
+            <div>
+              <dt>Speed</dt>
+              <dd>@if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} <small>kt</small> } @else { — }</dd>
+            </div>
+            <div>
+              <dt>Heading</dt>
+              <dd>@if (a.true_track != null) { {{ a.true_track | number: '3.0-0' }}° } @else { — }</dd>
+            </div>
+            <div>
+              <dt>Vertical</dt>
+              <dd>
+                @if (climb(a); as c) { <span class="climb climb--{{ c.tone }}">{{ c.label }}</span> } @else { — }
+              </dd>
+            </div>
+            <div>
+              <dt>Squawk</dt>
+              <dd>{{ a.squawk ?? '—' }}</dd>
+            </div>
+            <div>
+              <dt>Last seen</dt>
+              <dd>{{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '—' }}</dd>
+            </div>
+          </dl>
+        </div>
+      } @else if (aircraft.hasValue()) {
+        <p class="stage-hint">Click a plane to lock on</p>
+      }
+    </div>
+
+    <aside class="tracker" aria-label="Airborne aircraft">
+      <div class="tracker__head">
+        <h3>Airborne now</h3>
+        @if (aircraft.hasValue()) {
+          <span class="muted mono">{{ trackList().length }} of {{ airborne().length }}</span>
+        }
+      </div>
+
+      <label class="search">
+        <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+        <span class="visually-hidden">Search aircraft</span>
+        <input type="search" placeholder="Callsign, ICAO24 or country" [value]="query()" (input)="onSearch($event)" />
+      </label>
+
+      @if (aircraft.error()) {
+        <div class="tracker__state tracker__state--error" role="alert">
+          <p>{{ aircraftError() }}</p>
+          <button type="button" class="btn btn--ghost" (click)="aircraft.reload()">Try again</button>
+        </div>
+      } @else if (!aircraft.hasValue()) {
+        <div class="tracker__state"><span class="loader" aria-hidden="true"></span><p>Loading aircraft…</p></div>
+      } @else if (trackList().length === 0) {
+        <div class="tracker__state"><p>No aircraft match “{{ query() }}”.</p></div>
+      } @else {
+        <ul class="tracker__list">
+          @for (a of trackList(); track a.icao24) {
+            <li>
+              <button
+                type="button"
+                class="track"
+                [id]="'track-' + a.icao24"
+                [class.track--active]="selectedId() === a.icao24"
+                [attr.aria-pressed]="selectedId() === a.icao24"
+                (click)="toggle(a.icao24)"
+              >
+                <span class="track__id">
+                  <span class="code">{{ callsign(a) }}</span>
+                  <span class="muted">{{ a.origin_country ?? '—' }}</span>
+                </span>
+                <span class="track__stats mono">
+                  <span>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} ft } @else { — }</span>
+                  <span class="muted">@if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} kt } @else { — }</span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      <a routerLink="/dashboard" [queryParams]="{ tab: 'aircraft' }" class="tracker__more">
+        Full aircraft table in the dashboard
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
+    </aside>
+  </div>
+</section>
+
+<section class="delays" aria-labelledby="delays-title">
+  <div class="tracking__head">
+    <p class="kicker">Delay watch</p>
+    <h2 id="delays-title">Running late</h2>
+    <p class="muted">The most delayed flights in the latest data, by departure or arrival delay.</p>
+  </div>
+
+  @if (delayed.error()) {
+    <div class="delays__empty delays__empty--error" role="alert">
+      <p>{{ delayedError() }}</p>
+      <button type="button" class="btn btn--ghost" (click)="delayed.reload()">Try again</button>
+    </div>
+  } @else if (!delayed.hasValue()) {
+    <div class="delays__empty"><span class="loader" aria-hidden="true"></span><p>Checking for delays…</p></div>
+  } @else if (delayedList().length === 0) {
+    <div class="delays__empty">
+      <svg class="delays__ok" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>
+      <p><strong>No delays right now.</strong> None of the flights in the latest data report a departure or arrival delay.</p>
+    </div>
+  } @else {
+    <ul class="delays__grid">
+      @for (f of topDelays(); track $index) {
+        <li class="delay-card">
+          <div class="delay-card__top">
+            <div>
+              <span class="code">{{ flightCode(f) }}</span>
+              <span class="muted">{{ f.airline_name ?? 'Unknown airline' }}</span>
+            </div>
+            <span class="delay-card__minutes">+{{ worstDelay(f) }}<small>min</small></span>
+          </div>
+          <p class="delay-card__route">{{ f.route ?? (f.departure_iata ?? '???') + ' → ' + (f.arrival_iata ?? '???') }}</p>
+          <dl class="delay-card__times">
+            <div>
+              <dt>Departure</dt>
+              <dd>
+                {{ f.scheduled_departure ? (f.scheduled_departure | date: 'HH:mm') : '--:--' }}
+                @if ((f.departure_delay ?? 0) > 0) { <span class="warn">+{{ f.departure_delay }}</span> }
+              </dd>
+              <app-weather-badge class="delay-card__wx" [icao]="f.departure_icao" />
+            </div>
+            <div>
+              <dt>Arrival</dt>
+              <dd>
+                {{ f.scheduled_arrival ? (f.scheduled_arrival | date: 'HH:mm') : '--:--' }}
+                @if ((f.arrival_delay ?? 0) > 0) { <span class="warn">+{{ f.arrival_delay }}</span> }
+              </dd>
+              <app-weather-badge class="delay-card__wx" [icao]="f.arrival_icao" />
+            </div>
+          </dl>
+        </li>
+      }
+    </ul>
+    @if (delayedList().length > topDelays().length) {
+      <a routerLink="/dashboard" class="tracker__more">
+        {{ delayedList().length - topDelays().length }} more delayed flights in the dashboard
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
+    }
+  }
+</section>
+
+<footer class="footer">
+  <app-brand />
+  <p class="muted">Data from OpenSky Network and Aviationstack, processed in Databricks.</p>
+</footer>

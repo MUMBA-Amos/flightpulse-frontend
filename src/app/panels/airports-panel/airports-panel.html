@@ -1,0 +1,54 @@
+<div class="panel-head">
+  <div>
+    <h2>Airports</h2>
+    <p class="muted">Scheduled departures and arrivals per airport.</p>
+  </div>
+  <div class="legend" aria-hidden="true">
+    <span><i class="legend__swatch"></i>Departures</span>
+    <span><i class="legend__swatch legend__swatch--alt"></i>Arrivals</span>
+  </div>
+</div>
+
+@if (airports.error()) {
+  <app-state-notice kind="error" heading="Unable to load airports" [message]="errorMessage()" (action)="airports.reload()" />
+} @else if (!airports.hasValue()) {
+  <app-state-notice kind="loading" message="Loading airport activity…" />
+} @else if (all().length === 0) {
+  <app-state-notice message="The API returned no airports." />
+} @else {
+  <div class="table-wrap" [class.stale]="airports.isLoading()">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Airport</th>
+          <th>Activity</th>
+          <th class="num">Departures</th>
+          <th class="num">Arrivals</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of all(); track $index) {
+          <tr>
+            <td>
+              <div class="stack">
+                <span class="code">{{ a.airport_iata ?? '—' }}</span>
+                <span class="muted">{{ a.airport_name ?? 'Unknown airport' }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="meter">
+                <span class="meter__value">{{ a.total_activity }}</span>
+                <span class="bar">
+                  <span class="bar__fill" [style.width.%]="departuresWidth(a)"></span>
+                  <span class="bar__fill bar__fill--alt" [style.width.%]="arrivalsWidth(a)"></span>
+                </span>
+              </div>
+            </td>
+            <td class="num">{{ a.scheduled_departures }}</td>
+            <td class="num">{{ a.scheduled_arrivals }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

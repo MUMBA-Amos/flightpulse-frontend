@@ -1,0 +1,59 @@
+<header class="topbar">
+  <app-brand />
+
+  <div class="topbar__actions">
+    <span class="updated">Refreshed {{ lastRefresh().toLocaleTimeString() }}</span>
+    <button type="button" class="btn" (click)="refresh()" [disabled]="stats.isLoading()">
+      <svg class="btn__icon" [class.spin]="stats.isLoading()" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />
+      </svg>
+      {{ stats.isLoading() ? 'Refreshing…' : 'Refresh' }}
+    </button>
+  </div>
+</header>
+
+<main class="content">
+  <div class="tiles" role="tablist" aria-label="Datasets">
+    @for (tab of tabs; track tab.id) {
+      <button
+        type="button"
+        role="tab"
+        class="tile"
+        [class.tile--active]="activeTab() === tab.id"
+        [attr.aria-selected]="activeTab() === tab.id"
+        [attr.aria-controls]="'panel-' + tab.id"
+        (click)="select(tab.id)"
+      >
+        <span class="tile__label">{{ tab.label }}</span>
+        <span class="tile__value">
+          @if (statValue(tab); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { — }
+        </span>
+      </button>
+    }
+  </div>
+
+  @if (stats.error()) {
+    <p class="stats-error" role="alert">
+      Summary counts are unavailable.
+      <button type="button" class="link" (click)="stats.reload()">Retry</button>
+    </p>
+  }
+
+  @if (visited().has('flights') || activeTab() === 'flights') {
+    <app-flights-panel id="panel-flights" role="tabpanel" [hidden]="activeTab() !== 'flights'" />
+  }
+  @if (visited().has('airlines') || activeTab() === 'airlines') {
+    <app-airlines-panel id="panel-airlines" role="tabpanel" [hidden]="activeTab() !== 'airlines'" />
+  }
+  @if (visited().has('airports') || activeTab() === 'airports') {
+    <app-airports-panel id="panel-airports" role="tabpanel" [hidden]="activeTab() !== 'airports'" />
+  }
+  @if (visited().has('aircraft') || activeTab() === 'aircraft') {
+    <app-aircraft-panel
+      id="panel-aircraft"
+      role="tabpanel"
+      [hidden]="activeTab() !== 'aircraft'"
+      [total]="stats.hasValue() ? stats.value().total_aircraft : null"
+    />
+  }
+</main>

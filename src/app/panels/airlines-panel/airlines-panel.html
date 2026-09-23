@@ -1,0 +1,51 @@
+<div class="panel-head">
+  <div>
+    <h2>Airlines</h2>
+    <p class="muted">Flight volume and delay performance per carrier.</p>
+  </div>
+</div>
+
+@if (airlines.error()) {
+  <app-state-notice kind="error" heading="Unable to load airlines" [message]="errorMessage()" (action)="airlines.reload()" />
+} @else if (!airlines.hasValue()) {
+  <app-state-notice kind="loading" message="Loading airline performance…" />
+} @else if (all().length === 0) {
+  <app-state-notice message="The API returned no airlines." />
+} @else {
+  <div class="table-wrap" [class.stale]="airlines.isLoading()">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Airline</th>
+          <th>Flights</th>
+          <th class="num">Delayed dep.</th>
+          <th class="num">Avg dep. delay</th>
+          <th class="num hide-sm">Delayed arr.</th>
+          <th class="num hide-sm">Avg arr. delay</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of all(); track $index) {
+          <tr>
+            <td>
+              <div class="stack">
+                <span>{{ a.airline_name ?? 'Unknown airline' }}</span>
+                <span class="code code--sm">{{ codes(a) }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="meter">
+                <span class="meter__value">{{ a.total_flights }}</span>
+                <span class="bar"><span class="bar__fill" [style.width.%]="share(a)"></span></span>
+              </div>
+            </td>
+            <td class="num" [class.warn]="(a.delayed_departures ?? 0) > 0">{{ a.delayed_departures ?? '—' }}</td>
+            <td class="num" [class.warn]="(a.average_departure_delay ?? 0) > 0">{{ minutes(a.average_departure_delay) }}</td>
+            <td class="num hide-sm" [class.warn]="(a.delayed_arrivals ?? 0) > 0">{{ a.delayed_arrivals ?? '—' }}</td>
+            <td class="num hide-sm" [class.warn]="(a.average_arrival_delay ?? 0) > 0">{{ minutes(a.average_arrival_delay) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

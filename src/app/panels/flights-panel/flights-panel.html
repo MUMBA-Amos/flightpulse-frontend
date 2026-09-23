@@ -1,0 +1,90 @@
+<div class="panel-head">
+  <div>
+    <h2>Flights</h2>
+    <p class="muted">Schedule, route and delay status for each flight.</p>
+  </div>
+</div>
+
+<div class="toolbar">
+  <label class="search">
+    <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+    <span class="visually-hidden">Search flights</span>
+    <input
+      type="search"
+      placeholder="Search flight, airline, airport or route"
+      [value]="query()"
+      (input)="onSearch($event)"
+    />
+  </label>
+  @if (flights.hasValue()) {
+    <span class="toolbar__meta">
+      {{ filtered().length }} of {{ all().length }} ·
+      <span [class.warn]="delayedCount() > 0">{{ delayedCount() }} delayed</span>
+    </span>
+  }
+</div>
+
+@if (flights.error()) {
+  <app-state-notice kind="error" heading="Unable to load flights" [message]="errorMessage()" (action)="flights.reload()" />
+} @else if (!flights.hasValue()) {
+  <app-state-notice kind="loading" message="Loading flights…" />
+} @else if (all().length === 0) {
+  <app-state-notice message="The API returned no flights." />
+} @else if (filtered().length === 0) {
+  <app-state-notice [message]="'No flights match “' + query() + '”.'" actionLabel="Clear search" (action)="query.set('')" />
+} @else {
+  <div class="board" [class.stale]="flights.isLoading()">
+    <div class="board__head" aria-hidden="true">
+      <span>Flight</span>
+      <span>Route</span>
+      <span>Departure</span>
+      <span>Arrival</span>
+      <span>Status</span>
+    </div>
+
+    <ul class="board__rows">
+      @for (f of filtered(); track $index) {
+        <li class="row">
+          <div class="cell cell--flight">
+            <span class="code">{{ flightCode(f) }}</span>
+            <span class="muted ellipsis">{{ f.airline_name ?? 'Unknown airline' }}</span>
+          </div>
+
+          <div class="cell cell--route">
+            <span class="route">{{ routeLabel(f) }}</span>
+            @if (f.flight_date) {
+              <span class="muted">{{ f.flight_date | date: 'EEE d MMM' }}</span>
+            }
+          </div>
+
+          <div class="cell cell--dep">
+            <span class="cell__label">Departure</span>
+            <span class="ellipsis">{{ f.departure_airport ?? '—' }}</span>
+            <span class="time">
+              {{ f.scheduled_departure ? (f.scheduled_departure | date: 'HH:mm') : '--:--' }}
+              <span class="delay delay--{{ departureDelay(f).tone }}">{{ departureDelay(f).label }}</span>
+            </span>
+            <app-weather-badge [icao]="f.departure_icao" />
+          </div>
+
+          <div class="cell cell--arr">
+            <span class="cell__label">Arrival</span>
+            <span class="ellipsis">{{ f.arrival_airport ?? '—' }}</span>
+            <span class="time">
+              {{ f.scheduled_arrival ? (f.scheduled_arrival | date: 'HH:mm') : '--:--' }}
+              <span class="delay delay--{{ arrivalDelay(f).tone }}">{{ arrivalDelay(f).label }}</span>
+            </span>
+            <app-weather-badge [icao]="f.arrival_icao" />
+          </div>
+
+          <div class="cell cell--status">
+            <span [class]="statusClass(f)">{{ f.flight_status ?? 'unknown' }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+}

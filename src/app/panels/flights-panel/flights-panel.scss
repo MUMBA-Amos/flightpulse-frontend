@@ -1,0 +1,131 @@
+:host { display: block; }
+
+$columns: minmax(150px, 1.1fr) minmax(120px, 0.8fr) minmax(180px, 1.5fr) minmax(180px, 1.5fr) 120px;
+
+.board {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+
+  &__head {
+    display: grid;
+    grid-template-columns: $columns;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-raised);
+  }
+
+  &__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--surface-raised); }
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 0.9rem;
+
+  &__label { display: none; }
+}
+
+.cell--status { align-items: flex-start; }
+
+.route {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.delay {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+
+  &--ok { color: var(--ok); }
+  &--late { color: var(--warn); }
+  &--unknown { color: var(--text-muted); font-weight: 400; }
+}
+
+// Cards on narrow screens
+@media (max-width: 900px) {
+  .board {
+    border: none;
+    background: none;
+
+    &__head { display: none; }
+    &__rows { display: grid; gap: 12px; }
+  }
+
+  .row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'flight status'
+      'route  route'
+      'dep    arr';
+    gap: 14px 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+
+    &:last-child { border-bottom: 1px solid var(--border); }
+  }
+
+  .cell--flight { grid-area: flight; }
+  .cell--status { grid-area: status; align-items: flex-end; }
+  .cell--route  { grid-area: route; }
+  .cell--dep    { grid-area: dep; }
+  .cell--arr    { grid-area: arr; }
+
+  .cell__label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+}
+
+@media (max-width: 520px) {
+  .row {
+    grid-template-areas:
+      'flight status'
+      'route  route'
+      'dep    dep'
+      'arr    arr';
+  }
+}

@@ -1,0 +1,110 @@
+<div class="panel-head">
+  <div>
+    <h2>Live aircraft</h2>
+    <p class="muted">Latest OpenSky position reports.</p>
+  </div>
+</div>
+
+<div class="toolbar">
+  <label class="search">
+    <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+    <span class="visually-hidden">Search aircraft</span>
+    <input
+      type="search"
+      placeholder="Search callsign, ICAO24, country or squawk"
+      [value]="query()"
+      (input)="onSearch($event)"
+    />
+  </label>
+
+  <div class="segmented" role="group" aria-label="Filter by state">
+    @for (f of filters; track f.id) {
+      <button type="button" [class.active]="groundFilter() === f.id" [attr.aria-pressed]="groundFilter() === f.id" (click)="groundFilter.set(f.id)">
+        {{ f.label }}
+      </button>
+    }
+  </div>
+
+  @if (aircraft.hasValue()) {
+    <span class="toolbar__meta">
+      {{ filtered().length }} of {{ all().length }}
+      @if (total(); as total) {
+        <span class="muted"> (sample of {{ total | number }})</span>
+      }
+    </span>
+  }
+</div>
+
+@if (aircraft.error()) {
+  <app-state-notice kind="error" heading="Unable to load aircraft" [message]="errorMessage()" (action)="aircraft.reload()" />
+} @else if (!aircraft.hasValue()) {
+  <app-state-notice kind="loading" message="Loading aircraft positions…" />
+} @else if (all().length === 0) {
+  <app-state-notice message="The API returned no aircraft." />
+} @else if (filtered().length === 0) {
+  <app-state-notice message="No aircraft match the current filters." actionLabel="Reset filters" (action)="query.set(''); groundFilter.set('all')" />
+} @else {
+  <div class="table-wrap" [class.stale]="aircraft.isLoading()">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Callsign</th>
+          <th class="hide-sm">Country</th>
+          <th class="num">Altitude</th>
+          <th class="num">Speed</th>
+          <th>Heading</th>
+          <th class="hide-sm">Vertical</th>
+          <th>State</th>
+          <th class="hide-sm">Last seen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of filtered(); track a.icao24) {
+          <tr>
+            <td>
+              <div class="stack">
+                <span class="code">{{ callsign(a) }}</span>
+                <span class="muted mono">{{ a.icao24 }}</span>
+              </div>
+            </td>
+            <td class="hide-sm">{{ a.origin_country ?? '—' }}</td>
+            <td class="num">
+              @if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <span class="unit">ft</span> } @else { — }
+            </td>
+            <td class="num">
+              @if (speedKt(a); as kt) { {{ kt | number: '1.0-0' }} <span class="unit">kt</span> } @else { — }
+            </td>
+            <td>
+              @if (a.true_track != null) {
+                <span class="heading">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" [style.transform]="'rotate(' + a.true_track + 'deg)'">
+                    <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
+                  </svg>
+                  <span class="mono">{{ a.true_track | number: '3.0-0' }}°</span>
+                </span>
+              } @else {
+                —
+              }
+            </td>
+            <td class="hide-sm">
+              @if (climb(a); as c) {
+                <span class="climb climb--{{ c.tone }}">{{ c.label }}</span>
+              } @else {
+                —
+              }
+            </td>
+            <td>
+              <span class="status" [class.status--active]="!a.on_ground">{{ a.on_ground ? 'On ground' : 'Airborne' }}</span>
+            </td>
+            <td class="hide-sm mono muted">
+              {{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '—' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
