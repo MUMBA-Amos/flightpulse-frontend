@@ -77,7 +77,7 @@ import { Brand } from './brand';
       display: flex;
       align-items: center;
       gap: 4px;
-      margin-right: auto;
+      margin-left: auto;
     }
 
     .nav__link {
