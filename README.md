@@ -32,7 +32,7 @@ flowchart LR
         N[nginx<br/>rate limits] --> API[FastAPI]
     end
 
-    OS -- every 30 min --> B
+    OS -- hourly --> B
     AS -- daily --> B
     API -- SQL --> S
     API -- SQL --> G
