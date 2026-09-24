@@ -103,7 +103,7 @@ export class FlightsPanel {
   }
 
   protected flightCode(f: Flight): string {
-    return f.flight_iata ?? f.flight_icao ?? f.flight_number ?? '—';
+    return f.flight_iata ?? f.flight_icao ?? f.flight_number ?? '-';
   }
 
   protected routeLabel(f: Flight): string {

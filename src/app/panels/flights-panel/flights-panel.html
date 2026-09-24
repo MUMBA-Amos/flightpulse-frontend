@@ -92,7 +92,7 @@
 
           <div class="cell cell--dep">
             <span class="cell__label">Departure</span>
-            <span class="ellipsis">{{ f.departure_airport ?? '—' }}</span>
+            <span class="ellipsis">{{ f.departure_airport ?? '-' }}</span>
             <span class="time">
               {{ f.scheduled_departure ? (f.scheduled_departure | date: 'HH:mm') : '--:--' }}
               <span class="delay delay--{{ departureDelay(f).tone }}">{{ departureDelay(f).label }}</span>
@@ -102,7 +102,7 @@
 
           <div class="cell cell--arr">
             <span class="cell__label">Arrival</span>
-            <span class="ellipsis">{{ f.arrival_airport ?? '—' }}</span>
+            <span class="ellipsis">{{ f.arrival_airport ?? '-' }}</span>
             <span class="time">
               {{ f.scheduled_arrival ? (f.scheduled_arrival | date: 'HH:mm') : '--:--' }}
               <span class="delay delay--{{ arrivalDelay(f).tone }}">{{ arrivalDelay(f).label }}</span>

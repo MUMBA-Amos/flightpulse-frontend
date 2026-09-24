@@ -108,7 +108,7 @@ export class Landing {
       const item = id ? document.getElementById(`track-${id}`) : null;
       const list = item?.closest('ul');
       if (!item || !list) return;
-      // Scroll only the list — scrollIntoView would also move the page.
+      // Scroll only the list: scrollIntoView would also move the page.
       const top = item.offsetTop - list.offsetTop;
       if (top < list.scrollTop || top + item.offsetHeight > list.scrollTop + list.clientHeight) {
         list.scrollTo({ top: top - list.clientHeight / 2 + item.offsetHeight / 2, behavior: 'smooth' });
@@ -121,7 +121,7 @@ export class Landing {
   }
 
   protected flightCode(f: Flight): string {
-    return f.flight_iata ?? f.flight_icao ?? f.flight_number ?? '—';
+    return f.flight_iata ?? f.flight_icao ?? f.flight_number ?? '-';
   }
 
   /** Largest reported delay for a flight, in minutes. */

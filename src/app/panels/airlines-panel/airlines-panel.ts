@@ -106,7 +106,7 @@ export class AirlinesPanel {
   }
 
   protected minutes(value: number | null): string {
-    if (value == null) return '—';
+    if (value == null) return '-';
     return `${Number.isInteger(value) ? value : value.toFixed(1)} min`;
   }
 }

@@ -10,7 +10,7 @@ export interface Climb {
 }
 
 export function callsign(a: AircraftState): string {
-  return a.callsign?.trim() || '—';
+  return a.callsign?.trim() || '-';
 }
 
 /** Barometric altitude (falls back to geometric), in feet. */

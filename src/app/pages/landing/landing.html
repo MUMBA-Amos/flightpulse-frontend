@@ -31,14 +31,14 @@
           <div class="figures__item">
             <dt>{{ f.label }}</dt>
             <dd>
-              @if (statValue(f.key); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { — }
+              @if (statValue(f.key); as value) { {{ value | number }} } @else if (stats.hasValue()) { 0 } @else { - }
             </dd>
           </div>
         }
         <div class="figures__item">
           <dt>Delayed</dt>
           <dd [class.warn]="delayedList().length > 0">
-            @if (delayed.hasValue()) { {{ delayedList().length | number }} } @else { — }
+            @if (delayed.hasValue()) { {{ delayedList().length | number }} } @else { - }
           </dd>
         </div>
       </dl>
@@ -139,25 +139,25 @@
           <dl class="detail__grid">
             <div>
               <dt>Altitude</dt>
-              <dd>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <small>ft</small> } @else { — }</dd>
+              <dd>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <small>ft</small> } @else { - }</dd>
             </div>
             <div>
               <dt>Speed</dt>
-              <dd>@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <small>km/h</small> } @else { — }</dd>
+              <dd>@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <small>km/h</small> } @else { - }</dd>
             </div>
             <div>
               <dt>Direction</dt>
-              <dd>@if (a.true_track != null) { {{ compassPoint(a.true_track) }} } @else { — }</dd>
+              <dd>@if (a.true_track != null) { {{ compassPoint(a.true_track) }} } @else { - }</dd>
             </div>
             <div>
               <dt>Climb</dt>
               <dd>
-                @if (climb(a); as c) { <span class="climb climb--{{ c.tone }}">{{ c.label }}</span> } @else { — }
+                @if (climb(a); as c) { <span class="climb climb--{{ c.tone }}">{{ c.label }}</span> } @else { - }
               </dd>
             </div>
             <div>
               <dt>Last seen</dt>
-              <dd>{{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '—' }}</dd>
+              <dd>{{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '-' }}</dd>
             </div>
           </dl>
         </div>
@@ -206,11 +206,11 @@
               >
                 <span class="track__id">
                   <span class="code">{{ callsign(a) }}</span>
-                  <span class="muted">{{ a.origin_country ?? '—' }}</span>
+                  <span class="muted">{{ a.origin_country ?? '-' }}</span>
                 </span>
                 <span class="track__stats mono">
-                  <span>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} ft } @else { — }</span>
-                  <span class="muted">@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} km/h } @else { — }</span>
+                  <span>@if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} ft } @else { - }</span>
+                  <span class="muted">@if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} km/h } @else { - }</span>
                 </span>
               </button>
             </li>

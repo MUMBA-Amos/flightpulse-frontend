@@ -78,9 +78,9 @@
                 <span class="bar"><span class="bar__fill" [style.width.%]="share(a)"></span></span>
               </div>
             </td>
-            <td class="num" [class.warn]="(a.delayed_departures ?? 0) > 0">{{ a.delayed_departures ?? '—' }}</td>
+            <td class="num" [class.warn]="(a.delayed_departures ?? 0) > 0">{{ a.delayed_departures ?? '-' }}</td>
             <td class="num" [class.warn]="(a.average_departure_delay ?? 0) > 0">{{ minutes(a.average_departure_delay) }}</td>
-            <td class="num hide-sm" [class.warn]="(a.delayed_arrivals ?? 0) > 0">{{ a.delayed_arrivals ?? '—' }}</td>
+            <td class="num hide-sm" [class.warn]="(a.delayed_arrivals ?? 0) > 0">{{ a.delayed_arrivals ?? '-' }}</td>
             <td class="num hide-sm" [class.warn]="(a.average_arrival_delay ?? 0) > 0">{{ minutes(a.average_arrival_delay) }}</td>
           </tr>
         }

@@ -38,13 +38,13 @@ import { WeatherIcon } from './weather-icon';
             <div class="card__now">
               <app-weather-icon class="card__icon" [kind]="kind()" />
               <span class="card__temp">
-                @if (m.temp != null) { {{ m.temp | number: '1.0-0' }}° } @else { — }
+                @if (m.temp != null) { {{ m.temp | number: '1.0-0' }}° } @else { - }
               </span>
               <span class="card__cond">{{ conditions() }}</span>
             </div>
             <dl class="card__facts">
-              <div><dt>Wind</dt><dd>{{ windText() ?? '—' }}</dd></div>
-              <div><dt>Visibility</dt><dd>{{ visibilityText() ?? '—' }}</dd></div>
+              <div><dt>Wind</dt><dd>{{ windText() ?? '-' }}</dd></div>
+              <div><dt>Visibility</dt><dd>{{ visibilityText() ?? '-' }}</dd></div>
               <div><dt>Observed</dt><dd>{{ observed() }}</dd></div>
             </dl>
           }
@@ -150,6 +150,6 @@ export class WeatherCard {
   });
   protected readonly observed = computed(() => {
     const t = this.metar()?.obsTime;
-    return t ? new Date(t * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+    return t ? new Date(t * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-';
   });
 }

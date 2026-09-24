@@ -88,14 +88,14 @@
             <td>
               <div class="stack">
                 <span class="code">{{ callsign(a) }}</span>
-                <span class="muted">{{ a.origin_country ?? '—' }}</span>
+                <span class="muted">{{ a.origin_country ?? '-' }}</span>
               </div>
             </td>
             <td class="num">
-              @if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <span class="unit">ft</span> } @else { — }
+              @if (altitudeFt(a); as ft) { {{ ft | number: '1.0-0' }} <span class="unit">ft</span> } @else { - }
             </td>
             <td class="num">
-              @if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <span class="unit">km/h</span> } @else { — }
+              @if (speedKmh(a); as kmh) { {{ kmh | number: '1.0-0' }} <span class="unit">km/h</span> } @else { - }
             </td>
             <td>
               @if (a.true_track != null) {
@@ -106,21 +106,21 @@
                   <span class="mono">{{ compassPoint(a.true_track) }}</span>
                 </span>
               } @else {
-                —
+                -
               }
             </td>
             <td class="hide-sm">
               @if (climb(a); as c) {
                 <span class="climb climb--{{ c.tone }}">{{ c.label }}</span>
               } @else {
-                —
+                -
               }
             </td>
             <td>
               <span class="status" [class.status--active]="!a.on_ground">{{ a.on_ground ? 'On the ground' : 'In the air' }}</span>
             </td>
             <td class="hide-sm mono muted">
-              {{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '—' }}
+              {{ lastSeen(a) ? (lastSeen(a) | date: 'HH:mm:ss') : '-' }}
             </td>
           </tr>
         }

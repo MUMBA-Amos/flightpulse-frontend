@@ -4,7 +4,7 @@ import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 /**
- * Broadcasts "refresh everything" to whichever panels are alive — from the
+ * Broadcasts "refresh everything" to whichever panels are alive, from the
  * top bar's Refresh button, and automatically every AUTO_REFRESH_MS while the
  * tab is visible.
  */
