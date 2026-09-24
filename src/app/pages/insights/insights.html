@@ -20,7 +20,7 @@
 
 <main class="content">
   @if (insights.error()) {
-    <app-state-notice kind="error" heading="Unable to load insights" [message]="errorMessage()" (action)="insights.reload()" />
+    <app-state-notice kind="error" heading="Insights will be back shortly" [message]="errorMessage()" (action)="insights.reload()" />
   } @else if (!data()) {
     <app-state-notice kind="loading" message="Loading insights…" />
   } @else if (!summary()) {

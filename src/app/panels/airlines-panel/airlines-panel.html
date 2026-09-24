@@ -43,7 +43,7 @@
 </div>
 
 @if (airlines.error()) {
-  <app-state-notice kind="error" heading="Unable to load airlines" [message]="errorMessage()" (action)="airlines.reload()" />
+  <app-state-notice kind="error" heading="Airlines will be back shortly" [message]="errorMessage()" (action)="airlines.reload()" />
 } @else if (!airlines.hasValue()) {
   <app-state-notice kind="loading" message="Loading airline performance…" />
 } @else if (all().length === 0) {

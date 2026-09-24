@@ -58,7 +58,7 @@
 </div>
 
 @if (flights.error()) {
-  <app-state-notice kind="error" heading="Unable to load flights" [message]="errorMessage()" (action)="flights.reload()" />
+  <app-state-notice kind="error" heading="Flights will be back shortly" [message]="errorMessage()" (action)="flights.reload()" />
 } @else if (!flights.hasValue()) {
   <app-state-notice kind="loading" message="Loading flights…" />
 } @else if (all().length === 0) {

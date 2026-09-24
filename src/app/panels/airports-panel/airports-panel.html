@@ -39,7 +39,7 @@
 </div>
 
 @if (airports.error()) {
-  <app-state-notice kind="error" heading="Unable to load airports" [message]="errorMessage()" (action)="airports.reload()" />
+  <app-state-notice kind="error" heading="Airports will be back shortly" [message]="errorMessage()" (action)="airports.reload()" />
 } @else if (!airports.hasValue()) {
   <app-state-notice kind="loading" message="Loading airport activity…" />
 } @else if (all().length === 0) {

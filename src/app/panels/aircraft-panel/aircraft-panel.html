@@ -61,7 +61,7 @@
 </div>
 
 @if (aircraft.error()) {
-  <app-state-notice kind="error" heading="Unable to load aircraft" [message]="errorMessage()" (action)="aircraft.reload()" />
+  <app-state-notice kind="error" heading="Aircraft will be back shortly" [message]="errorMessage()" (action)="aircraft.reload()" />
 } @else if (!aircraft.hasValue()) {
   <app-state-notice kind="loading" message="Loading aircraft positions…" />
 } @else if (all().length === 0) {
