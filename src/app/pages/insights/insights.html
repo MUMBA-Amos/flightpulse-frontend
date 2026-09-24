@@ -1,0 +1,247 @@
+<app-site-nav />
+
+<section class="intro" aria-labelledby="insights-title">
+  <div class="intro__text">
+    <p class="kicker">Delay insights</p>
+    <h1 id="insights-title">How punctual are flights from {{ placeName() }}?</h1>
+    <p class="muted">
+      Departures over the last 30 days. A flight counts as on time if it leaves no more than 15 minutes after its
+      scheduled time.
+    </p>
+    <div class="segmented intro__switch" role="group" aria-label="Airport">
+      @for (t of tracked; track t.code) {
+        <button type="button" [class.active]="airport() === t.code" [attr.aria-pressed]="airport() === t.code" (click)="airport.set(t.code)">
+          {{ t.label }} <span class="code">{{ t.code }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<main class="content">
+  @if (insights.error()) {
+    <app-state-notice kind="error" heading="Unable to load insights" [message]="errorMessage()" (action)="insights.reload()" />
+  } @else if (!data()) {
+    <app-state-notice kind="loading" message="Loading insights…" />
+  } @else if (!summary()) {
+    <app-state-notice heading="Collecting data" [message]="'Insights for ' + placeName() + ' appear after the first daily run.'" />
+  } @else {
+    @let s = summary()!;
+
+    @if (!settled()) {
+      <p class="collecting" role="status">
+        <b>Collecting data: {{ s.days }} {{ s.days === 1 ? 'day' : 'days' }} so far.</b>
+        Early figures come from a small sample and will change; they become more reliable after {{ settledDays }} days.
+      </p>
+    }
+
+    <section class="kpis" aria-label="Headline figures">
+      <div class="kpi">
+        <span class="kpi__label">On time</span>
+        <span class="kpi__value">{{ s.on_time_pct | number: '1.0-0' }}<small>%</small></span>
+        <span class="kpi__note">of departures left within 15 min</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Average delay</span>
+        <span class="kpi__value">{{ s.avg_delay_min | number: '1.0-0' }}<small> min</small></span>
+        <span class="kpi__note">per departure, early flights counted as 0</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Flights analysed</span>
+        <span class="kpi__value">{{ s.flights | number }}</span>
+        <span class="kpi__note">across {{ s.days }} {{ s.days === 1 ? 'day' : 'days' }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Period</span>
+        <span class="kpi__value kpi__value--small">
+          {{ s.first_day | date: 'd MMM' }}@if (s.last_day !== s.first_day) { – {{ s.last_day | date: 'd MMM' }} }
+        </span>
+        <span class="kpi__note">updated every night</span>
+      </div>
+    </section>
+
+    <section class="findings" aria-label="Key findings">
+      <div class="finding">
+        <span class="finding__label">Most punctual airline</span>
+        @if (s.most_punctual_airline) {
+          <p><b>{{ s.most_punctual_airline }}</b>: {{ s.most_punctual_on_time_pct | number: '1.0-0' }}% of its flights left on time.</p>
+        } @else {
+          <p class="muted">Needs airlines with at least {{ minFlights }} flights.</p>
+        }
+      </div>
+      <div class="finding">
+        <span class="finding__label">Least punctual airline</span>
+        @if (s.least_punctual_airline && s.least_punctual_airline !== s.most_punctual_airline) {
+          <p><b>{{ s.least_punctual_airline }}</b>: {{ s.least_punctual_on_time_pct | number: '1.0-0' }}% left on time.</p>
+        } @else {
+          <p class="muted">Needs at least two airlines with {{ minFlights }}+ flights.</p>
+        }
+      </div>
+      <div class="finding">
+        <span class="finding__label">Worst time to fly</span>
+        @if (s.worst_hour !== null) {
+          <p>Departures between <b>{{ hourRange(s.worst_hour) }}</b> are the least likely to leave on time.</p>
+        } @else {
+          <p class="muted">Needs hours with at least {{ minFlights }} flights.</p>
+        }
+      </div>
+    </section>
+
+    <div class="charts">
+      <!-- On time by hour -->
+      <section class="chart chart--wide" aria-labelledby="hours-title">
+        <header class="chart__head">
+          <div>
+            <h2 id="hours-title">On time by hour of departure</h2>
+            <p class="muted">Share of flights leaving within 15 min, by scheduled hour (local time).</p>
+          </div>
+          <span class="chart__meta">{{ hoursCovered() }} of 24 hours have data · faded: fewer than {{ minFlights }} flights</span>
+        </header>
+        <div class="columns" role="list">
+          <div class="columns__grid" aria-hidden="true"><span>100%</span><span>50%</span><span>0%</span></div>
+          @for (c of hourColumns(); track c.hour) {
+            <div
+              class="column"
+              role="listitem"
+              tabindex="0"
+              [class.column--thin]="isThin(c.data)"
+              [attr.aria-label]="c.data ? hourRange(c.hour) + ': ' + c.data.on_time_pct + '% on time, ' + c.data.flights + ' flights' : hourRange(c.hour) + ': no flights yet'"
+            >
+              <div class="column__track">
+                @if (c.data) {
+                  <span class="column__bar" [style.height.%]="c.data.on_time_pct"></span>
+                }
+              </div>
+              <span class="column__label">{{ c.hour % 3 === 0 ? c.label : '' }}</span>
+              <span class="tip" aria-hidden="true">
+                <b>{{ hourRange(c.hour) }}</b>
+                @if (c.data) {
+                  <span>{{ c.data.on_time_pct | number: '1.0-0' }}% on time</span>
+                  <span>{{ c.data.flights }} flights · avg delay {{ c.data.avg_delay_min | number: '1.0-0' }} min</span>
+                } @else {
+                  <span>No flights sampled yet</span>
+                }
+              </span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Airlines -->
+      <section class="chart" aria-labelledby="airlines-title">
+        <header class="chart__head">
+          <div>
+            <h2 id="airlines-title">Airlines by on-time rate</h2>
+            <p class="muted">Airlines with at least {{ minFlights }} departures.</p>
+          </div>
+        </header>
+        @if (rankedAirlines().length === 0) {
+          <p class="empty">No airline has {{ minFlights }} departures yet.</p>
+        } @else {
+          <ul class="bars">
+            @for (a of rankedAirlines(); track a.airline_name) {
+              <li class="bars__row" tabindex="0" [attr.aria-label]="airlineLabel(a)">
+                <span class="bars__name">{{ a.airline_name }} <span class="muted">· {{ a.flights }}</span></span>
+                <span class="bars__track"><span class="bars__fill" [style.width.%]="a.on_time_pct"></span></span>
+                <span class="bars__value">{{ a.on_time_pct | number: '1.0-0' }}%</span>
+              </li>
+            }
+          </ul>
+        }
+        @if (unrankedAirlines() > 0) {
+          <p class="chart__foot">{{ unrankedAirlines() }} more {{ unrankedAirlines() === 1 ? 'airline has' : 'airlines have' }} fewer than {{ minFlights }} departures and {{ unrankedAirlines() === 1 ? "isn't" : "aren't" }} ranked yet.</p>
+        }
+      </section>
+
+      <!-- Delay bands -->
+      <section class="chart" aria-labelledby="bands-title">
+        <header class="chart__head">
+          <div>
+            <h2 id="bands-title">How late are the late ones?</h2>
+            <p class="muted">Share of all departures by how late they left.</p>
+          </div>
+        </header>
+        <ul class="bars">
+          @for (b of bands(); track b.band) {
+            <li class="bars__row" tabindex="0" [attr.aria-label]="b.label + ': ' + b.share + '%, ' + b.flights + ' flights'">
+              <span class="bars__name">{{ b.label }}</span>
+              <span class="bars__track"><span class="bars__fill" [class.bars__fill--muted]="b.band === 'On time'" [style.width.%]="b.share"></span></span>
+              <span class="bars__value">{{ b.share | number: '1.0-0' }}%</span>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- Daily trend -->
+      <section class="chart" aria-labelledby="daily-title">
+        <header class="chart__head">
+          <div>
+            <h2 id="daily-title">On time day by day</h2>
+            <p class="muted">Share of each day's departures that left on time.</p>
+          </div>
+        </header>
+        @if (daily().length < 2) {
+          <p class="empty">A trend appears once there are at least two days of data ({{ daily().length }} so far).</p>
+        } @else {
+          <div class="columns columns--days" role="list">
+            <div class="columns__grid" aria-hidden="true"><span>100%</span><span>50%</span><span>0%</span></div>
+            @for (d of daily(); track d.flight_date) {
+              <div class="column" role="listitem" tabindex="0" [class.column--thin]="isThin(d)" [attr.aria-label]="(d.flight_date | date: 'd MMM') + ': ' + d.on_time_pct + '% on time, ' + d.flights + ' flights'">
+                <div class="column__track"><span class="column__bar" [style.height.%]="d.on_time_pct"></span></div>
+                <span class="column__label">{{ d.flight_date | date: 'd/M' }}</span>
+                <span class="tip" aria-hidden="true">
+                  <b>{{ d.flight_date | date: 'EEE d MMM' }}</b>
+                  <span>{{ d.on_time_pct | number: '1.0-0' }}% on time</span>
+                  <span>{{ d.flights }} flights · avg delay {{ d.avg_delay_min | number: '1.0-0' }} min</span>
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Routes -->
+      <section class="chart" aria-labelledby="routes-title">
+        <header class="chart__head">
+          <div>
+            <h2 id="routes-title">Least punctual destinations</h2>
+            <p class="muted">Destinations with at least 3 departures, least on time first.</p>
+          </div>
+        </header>
+        @if (worstRoutes().length === 0) {
+          <p class="empty">No destination has 3 departures yet.</p>
+        } @else {
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th class="num">Flights</th>
+                <th class="num">On time</th>
+                <th class="num">Avg delay</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of worstRoutes(); track r.arrival_iata) {
+                <tr>
+                  <td>
+                    <span class="code">{{ r.arrival_iata }}</span>
+                    <span class="muted"> {{ r.arrival_airport }}</span>
+                  </td>
+                  <td class="num">{{ r.flights }}</td>
+                  <td class="num">{{ r.on_time_pct | number: '1.0-0' }}%</td>
+                  <td class="num">{{ r.avg_delay_min | number: '1.0-0' }} min</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </section>
+    </div>
+
+    <p class="method">
+      How this works: every night FlightPulse records up to 100 landed departures per airport from Aviationstack,
+      sampling a different part of the day each night, and works out each flight's delay from its scheduled and actual
+      departure times. Flights sold by several airlines are counted once, under the airline that operates them.
+    </p>
+  }
+</main>

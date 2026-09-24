@@ -12,6 +12,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+    path: 'insights',
+    title: 'Delay insights · FlightPulse',
+    loadComponent: () => import('./pages/insights/insights').then((m) => m.Insights),
+  },
+  {
     path: 'weather',
     title: 'Airport weather · FlightPulse',
     loadComponent: () => import('./pages/weather/weather').then((m) => m.Weather),

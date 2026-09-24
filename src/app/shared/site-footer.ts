@@ -19,6 +19,7 @@ import { Brand } from './brand';
           <h2>Explore</h2>
           <a routerLink="/">Home</a>
           <a routerLink="/dashboard">Dashboard</a>
+          <a routerLink="/insights">Delay insights</a>
           <a routerLink="/weather">Airport weather</a>
         </nav>
 

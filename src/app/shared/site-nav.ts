@@ -149,6 +149,7 @@ export class SiteNav {
   protected readonly links = [
     { path: '/', label: 'Home' },
     { path: '/dashboard', label: 'Dashboard' },
+    { path: '/insights', label: 'Insights' },
     { path: '/weather', label: 'Weather' },
   ];
 }

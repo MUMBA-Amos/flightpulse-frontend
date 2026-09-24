@@ -7,6 +7,7 @@ import { AircraftRoute, AircraftState } from '../models/aircraft.model';
 import { AirlinePerformance } from '../models/airline.model';
 import { AirportActivity } from '../models/airport.model';
 import { Flight } from '../models/flight.model';
+import { AirportInsights, TrackedAirport } from '../models/insights.model';
 import { FlightPulseStats } from '../models/stats.model';
 import { WeatherBatchResponse, WeatherResponse } from '../models/weather.model';
 
@@ -46,6 +47,16 @@ export class FlightPulseApi {
   /** Latest METAR for several airports in one request (up to 100). */
   getWeatherBatch(icaos: string[]): Observable<WeatherBatchResponse> {
     return this.http.get<WeatherBatchResponse>(`${this.baseUrl}/weather/`, { params: { ids: icaos.join(',') } });
+  }
+
+  /** Airports with delay insights, with their headline figures. */
+  getTrackedAirports(): Observable<TrackedAirport[]> {
+    return this.http.get<TrackedAirport[]>(`${this.baseUrl}/insights/`);
+  }
+
+  /** Everything the Insights page shows for one airport (IATA code, e.g. KUL). */
+  getInsights(airport: string): Observable<AirportInsights> {
+    return this.http.get<AirportInsights>(`${this.baseUrl}/insights/${encodeURIComponent(airport)}`);
   }
 
   /** The 500 most recently seen aircraft; `airborne: true` returns only those in the air. */
