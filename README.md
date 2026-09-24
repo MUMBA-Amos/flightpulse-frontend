@@ -47,7 +47,7 @@ This repository is the **website**. The rest of the system:
 
 | Part | Where | What it does |
 |---|---|---|
-| Data pipeline | Databricks (notebooks not published yet) | Two scheduled jobs load OpenSky and Aviationstack data plus airport weather through bronze → silver → gold tables: cleaning it, merging codeshare duplicates, keeping a day-by-day flight history and building the delay insight tables |
+| Data pipeline | [flightpulse-pipeline](https://github.com/MUMBA-Amos/flightpulse-pipeline), on Databricks | Two scheduled jobs load OpenSky and Aviationstack data plus airport weather through bronze → silver → gold tables: cleaning it, merging codeshare duplicates, keeping a day-by-day flight history and building the delay insight tables |
 | API | [flightpulse-api](https://github.com/MUMBA-Amos/flightpulse-api), on AWS EC2 | FastAPI service that reads the Databricks tables and adds weather and route lookups, with caching and rate limiting |
 | Website | This repo, on Vercel | Angular app; Vercel forwards `/api/*` requests to the API, so the browser only ever talks to one HTTPS address |
 
