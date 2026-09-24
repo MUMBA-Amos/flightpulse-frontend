@@ -6,8 +6,6 @@ FlightPulse follows thousands of aircraft around the world on a live 3D globe, s
 
 **Live site:** https://flightpulse-frontend.vercel.app
 
-![FlightPulse home page with the live globe](docs/screenshots/home.png)
-
 ## Features
 
 - **Live globe** of about 500 aircraft in the air, moving at their real speed. Click a plane to follow it and see its route drawn from origin to destination.
@@ -15,10 +13,6 @@ FlightPulse follows thousands of aircraft around the world on a live 3D globe, s
 - **Delay watch** highlighting the most delayed flights.
 - **Airport weather** for every airport in the day's flights: temperature, wind, visibility and flying conditions, with a summary of the warmest, coolest and windiest airports.
 - Refreshes itself every 5 minutes; works on phones.
-
-| Dashboard | Airport weather |
-|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Airport weather](docs/screenshots/weather.png) |
 
 ## How it works
 
