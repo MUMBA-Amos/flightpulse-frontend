@@ -88,6 +88,19 @@
     </section>
 
     <div class="charts">
+      <!-- Route map -->
+      @if (data()!.latitude !== null && data()!.longitude !== null && data()!.routes.length > 0) {
+        <section class="chart chart--wide" aria-labelledby="map-title">
+          <header class="chart__head">
+            <div>
+              <h2 id="map-title">Where flights from {{ placeName() }} go</h2>
+              <p class="muted">Every destination in the sample, coloured by how many flights to it left on time. Hover a dot for details.</p>
+            </div>
+          </header>
+          <app-route-map [code]="airport()" [latitude]="data()!.latitude!" [longitude]="data()!.longitude!" [routes]="data()!.routes" />
+        </section>
+      }
+
       <!-- On time by hour -->
       <section class="chart chart--wide" aria-labelledby="hours-title">
         <header class="chart__head">

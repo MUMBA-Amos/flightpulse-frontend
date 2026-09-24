@@ -34,6 +34,9 @@ export interface HourInsight extends Punctuality {
 export interface RouteInsight extends Punctuality {
   arrival_iata: string;
   arrival_airport: string | null;
+  /** Destination coordinates for the route map; null if unknown. */
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export interface DayInsight extends Punctuality {
@@ -50,6 +53,9 @@ export interface DelayBandInsight {
 export interface AirportInsights {
   airport: string;
   name: string;
+  /** The airport's own coordinates, the centre of the route map. */
+  latitude: number | null;
+  longitude: number | null;
   summary: InsightSummary | null;
   airlines: AirlineInsight[];
   hours: HourInsight[];

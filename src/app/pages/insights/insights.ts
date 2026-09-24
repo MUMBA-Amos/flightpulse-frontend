@@ -7,6 +7,7 @@ import { FlightPulseApi } from '../../services/flightpulse-api.service';
 import { describeHttpError } from '../../shared/http-error';
 import { SiteNav } from '../../shared/site-nav';
 import { StateNotice } from '../../shared/state-notice';
+import { RouteMap } from './route-map';
 
 /** Groups with fewer flights than this aren't ranked, and are faded in charts. */
 const MIN_FLIGHTS = 5;
@@ -35,7 +36,7 @@ interface HourColumn {
 /** Delay insights for the tracked airports, from the gold insight tables. */
 @Component({
   selector: 'app-insights',
-  imports: [DatePipe, DecimalPipe, SiteNav, StateNotice],
+  imports: [DatePipe, DecimalPipe, RouteMap, SiteNav, StateNotice],
   templateUrl: './insights.html',
   styleUrl: './insights.scss',
   host: { class: 'page' },
