@@ -44,7 +44,7 @@ export class Dashboard {
     { id: 'flights', label: 'Flights', statKey: 'total_flights', hint: "Today's snapshot", icon: PLANE_ICON, filled: true },
     { id: 'airlines', label: 'Airlines', statKey: 'total_airlines', hint: "Today's snapshot", icon: 'M4 21V8l8-5 8 5v13M9 21v-6h6v6M8 10h.01M12 10h.01M16 10h.01' },
     { id: 'airports', label: 'Airports', statKey: 'total_airports', hint: "Today's snapshot", icon: 'M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z' },
-    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide, updated every 30 min', icon: 'M12 12l6.5-6.5M21 12a9 9 0 1 1-9-9M17 12a5 5 0 1 1-5-5' },
+    { id: 'aircraft', label: 'Aircraft tracked', statKey: 'total_aircraft', hint: 'Worldwide, updated hourly', icon: 'M12 12l6.5-6.5M21 12a9 9 0 1 1-9-9M17 12a5 5 0 1 1-5-5' },
   ];
 
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
