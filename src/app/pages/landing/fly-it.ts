@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { SimAirport } from '../../models/sim.model';
@@ -28,7 +28,7 @@ import { flyingConditions } from '../../shared/weather-format';
           </p>
         }
       </div>
-      @if (briefing.hasValue() && briefing.value().simbrief_url; as url) {
+      @if (simbriefUrl(); as url) {
         <a class="btn" [href]="url" target="_blank" rel="noopener">
           Plan in SimBrief
           <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M18 14v5H5V6h5" /></svg>
@@ -49,11 +49,34 @@ import { flyingConditions } from '../../shared/weather-format';
           This flight's route isn't known (common for private and cargo flights), so there's no briefing to build.
         </p>
       } @else {
-        @if (briefing.value().simbrief_fields.length) {
+        @if (simbriefFields().length) {
           <div class="prefill">
+            <label class="prefill__type">
+              <span class="prefill__label">Aircraft you'll fly</span>
+              <input
+                type="text"
+                list="sim-types"
+                maxlength="4"
+                placeholder="B738"
+                autocomplete="off"
+                spellcheck="false"
+                [value]="chosenType()"
+                (input)="onType($event)"
+              />
+              <datalist id="sim-types">
+                @for (t of commonTypes; track t) { <option [value]="t"></option> }
+              </datalist>
+              <small>
+                @if (realType(); as real) {
+                  The real aircraft is {{ real }}. Pick another to fly this flight in a different plane.
+                } @else {
+                  The real aircraft type isn't known. Pick the one you'll fly, as an ICAO code (e.g. B738).
+                }
+              </small>
+            </label>
             <span class="prefill__label">SimBrief will be filled in with</span>
             <ul>
-              @for (f of briefing.value().simbrief_fields; track f.label) {
+              @for (f of simbriefFields(); track f.label) {
                 <li><span>{{ f.label }}</span> {{ f.value }}</li>
               }
             </ul>
@@ -194,6 +217,20 @@ import { flyingConditions } from '../../shared/weather-format';
       text-transform: uppercase;
       color: var(--text-muted);
     }
+    .prefill__type { display: block; margin-bottom: 12px; }
+    .prefill__type input {
+      width: 110px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: var(--text);
+      background: var(--surface-raised);
+    }
+    .prefill__type input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .prefill__type small { display: block; margin-top: 6px; font-size: 0.72rem; color: var(--text-muted); }
     .prefill ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
     .prefill li {
       padding: 3px 9px;
@@ -302,5 +339,44 @@ export class FlyIt {
   });
 
   protected readonly errorText = computed(() => describeHttpError(this.briefing.error()));
+
+  /** ICAO code of the real aircraft, when known. */
+  protected readonly realType = computed(() =>
+    this.briefing.hasValue() ? (this.briefing.value().aircraft?.icao_type ?? null) : null,
+  );
+  /** The aircraft the simmer will fly: the real one unless they pick another. */
+  protected readonly chosenType = linkedSignal(() => this.realType() ?? '');
+  private readonly flyingRealType = computed(() => this.chosenType() === (this.realType() ?? ''));
+
+  /** The SimBrief link with the chosen aircraft; the registration only applies to the real one. */
+  protected readonly simbriefUrl = computed(() => {
+    const base = this.briefing.hasValue() ? this.briefing.value().simbrief_url : null;
+    if (!base) return null;
+    const url = new URL(base);
+    if (this.chosenType()) url.searchParams.set('type', this.chosenType());
+    else url.searchParams.delete('type');
+    if (!this.flyingRealType()) url.searchParams.delete('reg');
+    return url.toString();
+  });
+
+  protected readonly simbriefFields = computed(() => {
+    if (!this.briefing.hasValue()) return [];
+    const fields = this.briefing
+      .value()
+      .simbrief_fields.filter((f) => f.label !== 'Aircraft type' && (this.flyingRealType() || f.label !== 'Registration'));
+    if (this.chosenType()) fields.splice(Math.min(5, fields.length), 0, { label: 'Aircraft type', value: this.chosenType() });
+    return fields;
+  });
+
+  /** Common airliners in simulators, as ICAO codes, for the aircraft picker. */
+  protected readonly commonTypes = [
+    'A19N', 'A20N', 'A21N', 'A319', 'A320', 'A321', 'A332', 'A333', 'A339', 'A359', 'A35K', 'A388',
+    'AT76', 'B38M', 'B39M', 'B737', 'B738', 'B739', 'B744', 'B748', 'B752', 'B763', 'B772', 'B77W',
+    'B788', 'B789', 'B78X', 'CRJ9', 'DH8D', 'E175', 'E190', 'E195',
+  ];
+
+  protected onType(event: Event): void {
+    this.chosenType.set((event.target as HTMLInputElement).value.trim().toUpperCase().replace(/[^A-Z0-9]/g, ''));
+  }
   protected readonly rating = flyingConditions;
 }
