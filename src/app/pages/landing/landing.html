@@ -137,7 +137,7 @@
             <p class="route__note">Usual route for this flight number</p>
           }
           @if (route.hasValue() && route.value().origin && route.value().destination) {
-            <button type="button" class="fly-link" (click)="scrollTo('fly-it')">
+            <button type="button" class="fly-link" [attr.aria-expanded]="flyItOpen()" (click)="openFlyIt()">
               Fly it in your sim
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
             </button>
@@ -231,9 +231,9 @@
     </aside>
   </div>
 
-  @if (selected(); as a) {
+  @if (flyItOpen() && selected(); as a) {
     @if (a.callsign?.trim(); as cs) {
-      <app-fly-it id="fly-it" [callsign]="cs" [icao24]="a.icao24" [cruiseFt]="cruiseFt(a)" />
+      <app-fly-it id="fly-it" [callsign]="cs" [icao24]="a.icao24" [cruiseFt]="cruiseFt(a)" (closed)="flyItOpen.set(false)" />
     }
   }
 </section>

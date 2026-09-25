@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, input, linkedSignal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal, output } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { SimAirport } from '../../models/sim.model';
@@ -28,12 +28,17 @@ import { flyingConditions } from '../../shared/weather-format';
           </p>
         }
       </div>
-      @if (simbriefUrl(); as url) {
-        <a class="btn" [href]="url" target="_blank" rel="noopener">
-          Plan in SimBrief
-          <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M18 14v5H5V6h5" /></svg>
-        </a>
-      }
+      <div class="fly__actions">
+        @if (simbriefUrl(); as url) {
+          <a class="btn" [href]="url" target="_blank" rel="noopener">
+            Plan in SimBrief
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8M18 14v5H5V6h5" /></svg>
+          </a>
+        }
+        <button type="button" class="fly__close" (click)="closed.emit()" aria-label="Close the flight-sim briefing">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </div>
     </div>
 
     @if (briefing.isLoading()) {
@@ -189,7 +194,23 @@ import { flyingConditions } from '../../shared/weather-format';
       margin-bottom: 18px;
     }
     .fly__head h3 { margin: 2px 0 4px; font-size: 1.25rem; }
-    .fly__head .btn { flex: none; text-decoration: none; }
+    .fly__actions { display: flex; flex: none; align-items: center; gap: 10px; }
+    .fly__actions .btn { text-decoration: none; }
+    .fly__close {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+    }
+    .fly__close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+    .fly__close:hover { color: var(--text); }
+    .fly__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .fly__head .muted { margin: 0; font-size: 0.875rem; }
     .fly__state {
       display: flex;
@@ -323,6 +344,8 @@ export class FlyIt {
   readonly icao24 = input.required<string>();
   /** Current altitude in feet, when the aircraft is level (so likely at cruise); otherwise null. */
   readonly cruiseFt = input<number | null>(null);
+  /** The close button was pressed. */
+  readonly closed = output<void>();
 
   protected readonly briefing = rxResource({
     params: () => ({ callsign: this.callsign(), icao24: this.icao24(), cruiseFt: this.cruiseFt() }),

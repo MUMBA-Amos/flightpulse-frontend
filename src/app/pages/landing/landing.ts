@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, linkedSignal, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 
@@ -87,6 +87,9 @@ export class Landing {
     };
   });
 
+  /** Whether the flight-sim card is open; it closes whenever another plane is picked. */
+  protected readonly flyItOpen = linkedSignal({ source: this.selectedId, computation: () => false });
+
   protected readonly figures: { label: string; key: keyof FlightPulseStats }[] = [
     { label: 'Flights', key: 'total_flights' },
     { label: 'Airlines', key: 'total_airlines' },
@@ -134,6 +137,12 @@ export class Landing {
   /** The aircraft's altitude when it's level, which for an airliner up high is its cruise altitude. */
   protected cruiseFt(a: AircraftState): number | null {
     return climb(a)?.tone === 'level' ? altitudeFt(a) : null;
+  }
+
+  protected openFlyIt(): void {
+    this.flyItOpen.set(true);
+    // Wait for the card to render before scrolling to it.
+    setTimeout(() => this.scrollTo('fly-it'));
   }
 
   protected toggle(id: string): void {
