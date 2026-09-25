@@ -3,6 +3,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 
+import { AircraftState } from '../../models/aircraft.model';
 import { Flight } from '../../models/flight.model';
 import { FlightPulseStats } from '../../models/stats.model';
 import { FlightPulseApi } from '../../services/flightpulse-api.service';
@@ -128,6 +129,11 @@ export class Landing {
   /** Largest reported delay for a flight, in minutes. */
   protected worstDelay(f: Flight): number {
     return Math.max(f.departure_delay ?? 0, f.arrival_delay ?? 0);
+  }
+
+  /** The aircraft's altitude when it's level, which for an airliner up high is its cruise altitude. */
+  protected cruiseFt(a: AircraftState): number | null {
+    return climb(a)?.tone === 'level' ? altitudeFt(a) : null;
   }
 
   protected toggle(id: string): void {

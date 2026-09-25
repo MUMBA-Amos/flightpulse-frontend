@@ -24,6 +24,7 @@ import { flyingConditions } from '../../shared/weather-format';
               Aircraft type unknown
             }
             @if (briefing.value().airline; as airline) { · {{ airline }} }
+            @if (briefing.value().cruise_level; as fl) { · Cruising at {{ fl }} }
           </p>
         }
       </div>
@@ -48,6 +49,16 @@ import { flyingConditions } from '../../shared/weather-format';
           This flight's route isn't known (common for private and cargo flights), so there's no briefing to build.
         </p>
       } @else {
+        @if (briefing.value().simbrief_fields.length) {
+          <div class="prefill">
+            <span class="prefill__label">SimBrief will be filled in with</span>
+            <ul>
+              @for (f of briefing.value().simbrief_fields; track f.label) {
+                <li><span>{{ f.label }}</span> {{ f.value }}</li>
+              }
+            </ul>
+          </div>
+        }
         <div class="fly__airports">
           @for (leg of legs(); track leg.label) {
             <section class="leg" [attr.aria-label]="leg.label">
@@ -131,7 +142,7 @@ import { flyingConditions } from '../../shared/weather-format';
         <p class="fly__note">
           The likely runway is a best guess from the wind; real controllers also weigh noise rules and traffic.
           @if (briefing.value().route_source === 'adsbdb') { The route is the usual one for this flight number. }
-          SimBrief needs a free account.
+          SimBrief builds the waypoint route itself and needs a free account.
         </p>
       }
     }
@@ -168,6 +179,30 @@ import { flyingConditions } from '../../shared/weather-format';
       color: var(--text-muted);
     }
     .fly__state p { margin: 0; }
+    .prefill {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border: 1px dashed var(--border-strong);
+      border-radius: 12px;
+    }
+    .prefill__label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .prefill ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .prefill li {
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: var(--accent-soft);
+    }
+    .prefill li span { font-family: var(--sans); font-size: 0.7rem; color: var(--text-muted); }
     .fly__airports {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -249,10 +284,12 @@ export class FlyIt {
 
   readonly callsign = input.required<string>();
   readonly icao24 = input.required<string>();
+  /** Current altitude in feet, when the aircraft is level (so likely at cruise); otherwise null. */
+  readonly cruiseFt = input<number | null>(null);
 
   protected readonly briefing = rxResource({
-    params: () => ({ callsign: this.callsign(), icao24: this.icao24() }),
-    stream: ({ params }) => this.api.getSimBriefing(params.callsign, params.icao24),
+    params: () => ({ callsign: this.callsign(), icao24: this.icao24(), cruiseFt: this.cruiseFt() }),
+    stream: ({ params }) => this.api.getSimBriefing(params.callsign, params.icao24, params.cruiseFt),
   });
 
   protected readonly legs = computed(() => {

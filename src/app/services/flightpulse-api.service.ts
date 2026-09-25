@@ -72,7 +72,9 @@ export class FlightPulseApi {
   }
 
   /** Flight-sim briefing for a live flight: aircraft, both airports' weather and runways, and a SimBrief link. */
-  getSimBriefing(callsign: string, icao24: string): Observable<SimBriefing> {
-    return this.http.get<SimBriefing>(`${this.baseUrl}/sim/${encodeURIComponent(callsign)}`, { params: { icao24 } });
+  getSimBriefing(callsign: string, icao24: string, cruiseFt: number | null): Observable<SimBriefing> {
+    const params: Record<string, string> = { icao24 };
+    if (cruiseFt != null) params['cruise_ft'] = String(Math.round(cruiseFt));
+    return this.http.get<SimBriefing>(`${this.baseUrl}/sim/${encodeURIComponent(callsign)}`, { params });
   }
 }

@@ -233,7 +233,7 @@
 
   @if (selected(); as a) {
     @if (a.callsign?.trim(); as cs) {
-      <app-fly-it id="fly-it" [callsign]="cs" [icao24]="a.icao24" />
+      <app-fly-it id="fly-it" [callsign]="cs" [icao24]="a.icao24" [cruiseFt]="cruiseFt(a)" />
     }
   }
 </section>

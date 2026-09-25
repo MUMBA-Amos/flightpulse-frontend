@@ -7,8 +7,12 @@ export interface SimBriefing {
   aircraft: SimAircraft | null;
   origin: SimAirport | null;
   destination: SimAirport | null;
+  /** e.g. "FL370", when the aircraft is level at cruise. */
+  cruise_level: string | null;
   /** SimBrief dispatch page with the flight filled in; null without both airports. */
   simbrief_url: string | null;
+  /** What the SimBrief link fills in, e.g. { label: "Aircraft type", value: "A320" }. */
+  simbrief_fields: { label: string; value: string }[];
 }
 
 export interface SimAircraft {
