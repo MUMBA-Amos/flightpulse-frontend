@@ -63,9 +63,9 @@ function planeSprite(size: number, selected: boolean, dpr: number): HTMLCanvasEl
   const ctx = sprite.getContext('2d')!;
   ctx.translate(blur, blur);
   ctx.scale(px / 24, px / 24);
-  ctx.shadowColor = 'rgba(245, 184, 61, 0.8)';
+  ctx.shadowColor = 'rgba(255, 199, 44, 0.8)';
   ctx.shadowBlur = blur;
-  ctx.fillStyle = selected ? '#ffd98a' : '#f5b83d';
+  ctx.fillStyle = selected ? '#ffe27a' : '#ffc72c';
   ctx.fill(PLANE);
 
   spriteCache.set(key, sprite);
@@ -384,17 +384,10 @@ export class Globe {
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.clearRect(0, 0, this.width, this.height);
 
-    // Atmosphere glow
-    const glow = ctx.createRadialGradient(cx, cy, r * 0.9, cx, cy, r * 1.25);
-    glow.addColorStop(0, 'rgba(57, 135, 229, 0.22)');
-    glow.addColorStop(1, 'rgba(57, 135, 229, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(cx - r * 1.25, cy - r * 1.25, r * 2.5, r * 2.5);
-
-    // Ocean
+    // Ocean: plain dark, like a radar or departures-board screen.
     const ocean = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.1, cx, cy, r);
-    ocean.addColorStop(0, '#15233d');
-    ocean.addColorStop(1, '#080d17');
+    ocean.addColorStop(0, '#18181b');
+    ocean.addColorStop(1, '#0d0d0f');
     ctx.beginPath();
     path({ type: 'Sphere' });
     ctx.fillStyle = ocean;
@@ -403,23 +396,23 @@ export class Globe {
     // Graticule
     ctx.beginPath();
     path(GRATICULE);
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.07)';
+    ctx.strokeStyle = 'rgba(200, 194, 180, 0.07)';
     ctx.lineWidth = 1;
     ctx.stroke();
 
     // Land
     ctx.beginPath();
     path(LAND);
-    ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
+    ctx.fillStyle = 'rgba(200, 194, 180, 0.14)';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+    ctx.strokeStyle = 'rgba(200, 194, 180, 0.3)';
     ctx.lineWidth = 0.8;
     ctx.stroke();
 
     // Rim
     ctx.beginPath();
     path({ type: 'Sphere' });
-    ctx.strokeStyle = 'rgba(125, 211, 252, 0.28)';
+    ctx.strokeStyle = 'rgba(200, 194, 180, 0.35)';
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
@@ -443,14 +436,14 @@ export class Globe {
 
     ctx.beginPath();
     path({ type: 'LineString', coordinates: [route.from, here] });
-    ctx.strokeStyle = 'rgba(245, 184, 61, 0.85)';
+    ctx.strokeStyle = 'rgba(255, 199, 44, 0.85)';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.beginPath();
     path({ type: 'LineString', coordinates: [here, route.to] });
     ctx.setLineDash([5, 6]);
-    ctx.strokeStyle = 'rgba(245, 184, 61, 0.55)';
+    ctx.strokeStyle = 'rgba(255, 199, 44, 0.55)';
     ctx.lineWidth = 1.6;
     ctx.stroke();
     ctx.setLineDash([]);
@@ -469,16 +462,16 @@ export class Globe {
       if (!pos) continue;
       ctx.beginPath();
       ctx.arc(pos[0], pos[1], 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#0b1220';
+      ctx.fillStyle = '#0b0b0c';
       ctx.fill();
-      ctx.strokeStyle = '#f5b83d';
+      ctx.strokeStyle = '#ffc72c';
       ctx.lineWidth = 2;
       ctx.stroke();
       if (label) {
-        ctx.fillStyle = 'rgba(10, 16, 28, 0.85)';
+        ctx.fillStyle = 'rgba(14, 14, 16, 0.85)';
         const width = ctx.measureText(label).width + 10;
         ctx.fillRect(pos[0] - width / 2, pos[1] - 26, width, 16);
-        ctx.fillStyle = '#ffd98a';
+        ctx.fillStyle = '#ffe27a';
         ctx.fillText(label, pos[0], pos[1] - 14);
       }
     }
@@ -517,8 +510,8 @@ export class Globe {
 
       if (tail) {
         const trail = ctx.createLinearGradient(tail[0], tail[1], pos[0], pos[1]);
-        trail.addColorStop(0, 'rgba(245, 184, 61, 0)');
-        trail.addColorStop(1, `rgba(245, 184, 61, ${isSelected ? 0.9 : 0.55})`);
+        trail.addColorStop(0, 'rgba(255, 199, 44, 0)');
+        trail.addColorStop(1, `rgba(255, 199, 44, ${isSelected ? 0.9 : 0.55})`);
         ctx.beginPath();
         ctx.moveTo(tail[0], tail[1]);
         ctx.lineTo(pos[0], pos[1]);
@@ -532,12 +525,12 @@ export class Globe {
         const phase = (this.time % 1.6) / 1.6;
         ctx.beginPath();
         ctx.arc(pos[0], pos[1], 12 + phase * 22, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(245, 184, 61, ${0.7 * (1 - phase)})`;
+        ctx.strokeStyle = `rgba(255, 199, 44, ${0.7 * (1 - phase)})`;
         ctx.lineWidth = 1.5;
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(pos[0], pos[1], 14, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(245, 184, 61, 0.5)';
+        ctx.strokeStyle = 'rgba(255, 199, 44, 0.5)';
         ctx.lineWidth = 1;
         ctx.stroke();
       }

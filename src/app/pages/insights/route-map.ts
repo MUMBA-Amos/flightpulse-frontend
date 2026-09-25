@@ -93,8 +93,8 @@ interface Destination {
 
     svg { display: block; width: 100%; height: auto; }
 
-    .map__graticule { fill: none; stroke: rgba(148, 163, 184, 0.08); stroke-width: 1; }
-    .map__land { fill: rgba(148, 163, 184, 0.12); stroke: rgba(148, 163, 184, 0.28); stroke-width: 0.6; }
+    .map__graticule { fill: none; stroke: rgba(200, 194, 180, 0.08); stroke-width: 1; }
+    .map__land { fill: rgba(200, 194, 180, 0.12); stroke: rgba(200, 194, 180, 0.28); stroke-width: 0.6; }
 
     .map__route {
       fill: none;
@@ -103,25 +103,25 @@ interface Destination {
       opacity: 0.55;
       transition: opacity 0.15s, stroke-width 0.15s;
     }
-    .map__route--good { stroke: #34d399; }
-    .map__route--fair { stroke: #fbbf24; }
-    .map__route--poor { stroke: #f87171; }
+    .map__route--good { stroke: #3ddc84; }
+    .map__route--fair { stroke: #ff9f1a; }
+    .map__route--poor { stroke: #ff5c4d; }
     .map__route--thin { opacity: 0.22; stroke-dasharray: 3 4; }
     .map__route--active { opacity: 1; stroke-width: 2.6; }
 
-    .map__origin-ring { fill: none; stroke: rgba(245, 184, 61, 0.45); stroke-width: 2; }
-    .map__origin { fill: #f5b83d; stroke: #0b1220; stroke-width: 2; }
+    .map__origin-ring { fill: none; stroke: rgba(255, 199, 44, 0.45); stroke-width: 2; }
+    .map__origin { fill: #ffc72c; stroke: #0b0b0c; stroke-width: 2; }
     .map__origin-label {
       font: 600 12px var(--mono);
       text-anchor: middle;
       fill: var(--text);
       paint-order: stroke;
-      stroke: #0b1220;
+      stroke: #0b0b0c;
       stroke-width: 4px;
     }
 
     .map__dot {
-      stroke: #0b1220;
+      stroke: #0b0b0c;
       stroke-width: 2;
       cursor: pointer;
       outline: none;
@@ -129,16 +129,16 @@ interface Destination {
 
       &:hover, &:focus-visible { filter: brightness(1.2); stroke: var(--text); }
     }
-    .map__dot--good { fill: #34d399; }
-    .map__dot--fair { fill: #fbbf24; }
-    .map__dot--poor { fill: #f87171; }
+    .map__dot--good { fill: #3ddc84; }
+    .map__dot--fair { fill: #ff9f1a; }
+    .map__dot--poor { fill: #ff5c4d; }
     .map__dot--thin { fill-opacity: 0.35; }
 
     .map__label {
       font: 600 11px var(--mono);
       fill: var(--text-muted);
       paint-order: stroke;
-      stroke: #0b1220;
+      stroke: #0b0b0c;
       stroke-width: 3px;
       pointer-events: none;
     }
@@ -152,10 +152,10 @@ interface Destination {
       min-width: 170px;
       padding: 8px 10px;
       border: 1px solid var(--border-strong);
-      border-radius: 8px;
+      border-radius: 3px;
       font-size: 0.75rem;
       color: var(--text-muted);
-      background: #0a101c;
+      background: #101012;
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
       pointer-events: none;
       transform: translate(-50%, calc(-100% - 14px));
@@ -180,9 +180,9 @@ interface Destination {
         height: 10px;
         border-radius: 50%;
 
-        &--good { background: #34d399; }
-        &--fair { background: #fbbf24; }
-        &--poor { background: #f87171; }
+        &--good { background: #3ddc84; }
+        &--fair { background: #ff9f1a; }
+        &--poor { background: #ff5c4d; }
       }
 
       &__note { margin-left: auto; }

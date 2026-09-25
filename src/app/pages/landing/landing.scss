@@ -20,8 +20,8 @@
     inset: 0;
     pointer-events: none;
     background:
-      linear-gradient(90deg, var(--bg) 0%, rgba(7, 11, 18, 0.88) 32%, rgba(7, 11, 18, 0) 62%),
-      linear-gradient(0deg, var(--bg) 0%, rgba(7, 11, 18, 0) 22%);
+      linear-gradient(90deg, var(--bg) 0%, rgba(11, 11, 12, 0.88) 32%, rgba(11, 11, 12, 0) 62%),
+      linear-gradient(0deg, var(--bg) 0%, rgba(11, 11, 12, 0) 22%);
   }
 }
 
@@ -43,25 +43,21 @@
 
   h1 {
     margin: 0 0 20px;
-    font-size: clamp(2.75rem, 7vw, 5.25rem);
+    font-size: clamp(3.25rem, 8.5vw, 6.75rem);
     font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+    line-height: 0.92;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
   }
 
-  &__accent {
-    background: linear-gradient(90deg, #f5b83d, #ffd98a);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+  &__accent { color: var(--accent); }
 
   &__lede {
     max-width: 34rem;
     margin: 0 0 32px;
-    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    font-size: clamp(1.05rem, 1.7vw, 1.2rem);
     line-height: 1.6;
-    color: #aab5c6;
+    color: #c9c3b6;
   }
 
   &__cta {
@@ -80,13 +76,13 @@
   margin: 0 0 24px;
   padding: 6px 12px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 2px;
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
-  background: rgba(14, 21, 34, 0.6);
+  background: rgba(19, 19, 21, 0.6);
   backdrop-filter: blur(6px);
 
   &__dot {
@@ -94,7 +90,7 @@
     height: 7px;
     border-radius: 50%;
     background: var(--ok);
-    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+    box-shadow: 0 0 0 0 rgba(61, 220, 132, 0.6);
     animation: pulse 2s ease-out infinite;
   }
 }
@@ -110,31 +106,41 @@
   backdrop-filter: blur(6px);
 }
 
+// Headline figures as departures-board tiles: dot-matrix digits on black.
 .figures {
   display: grid;
   grid-template-columns: repeat(5, auto);
   justify-content: start;
-  gap: 28px;
+  gap: 4px;
   margin: 0;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
 
-  &__item { margin: 0; }
+  &__item {
+    margin: 0;
+    padding: 10px 14px 8px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--board);
+  }
 
   dt {
-    margin-bottom: 6px;
-    font-size: 0.7rem;
+    margin-bottom: 4px;
+    font-family: var(--display);
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-muted);
   }
 
   dd {
     margin: 0;
-    font-family: var(--mono);
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-family: var(--dot);
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent);
+
+    &.warn { color: var(--warn); }
   }
 }
 
@@ -171,7 +177,7 @@
   }
 
   &:hover { color: var(--text); }
-  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 }
 
 // ---------- Live tracking ----------
@@ -187,9 +193,11 @@
 
     h2 {
       margin: 0 0 10px;
-      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      font-size: clamp(2.1rem, 4.2vw, 3.1rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
     }
 
     .muted { font-size: 0.95rem; line-height: 1.6; }
@@ -206,8 +214,8 @@
     position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 16px;
-    background: radial-gradient(circle at 50% 50%, #0d1729 0%, var(--bg) 70%);
+    border-radius: var(--radius);
+    background: var(--board);
   }
 
   &__globe {
@@ -223,10 +231,10 @@
   margin: 0;
   padding: 6px 12px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 2px;
   font-size: 0.75rem;
   color: var(--text-muted);
-  background: rgba(14, 21, 34, 0.7);
+  background: rgba(19, 19, 21, 0.7);
   backdrop-filter: blur(6px);
   transform: translateX(-50%);
   pointer-events: none;
@@ -238,9 +246,9 @@
   bottom: 16px;
   width: min(340px, calc(100% - 32px));
   padding: 16px;
-  border: 1px solid rgba(245, 184, 61, 0.35);
-  border-radius: 12px;
-  background: rgba(10, 16, 28, 0.82);
+  border: 1px solid rgba(255, 199, 44, 0.35);
+  border-radius: var(--radius);
+  background: rgba(14, 14, 16, 0.82);
   backdrop-filter: blur(10px);
   animation: rise 0.3s ease-out both;
 
@@ -256,10 +264,11 @@
 
   &__callsign {
     display: block;
-    font-family: var(--mono);
-    font-size: 1.35rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-family: var(--dot);
+    font-size: 1.9rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.02em;
     color: var(--accent);
   }
 
@@ -270,7 +279,7 @@
     height: 30px;
     padding: 0;
     border: 1px solid var(--border-strong);
-    border-radius: 8px;
+    border-radius: 3px;
     color: var(--text-muted);
     background: transparent;
     cursor: pointer;
@@ -316,7 +325,7 @@
   margin-bottom: 4px;
   padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.03);
 
   &__airport {
@@ -388,7 +397,7 @@
   min-height: 0;
   padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   background: var(--surface);
 
   &__head {
@@ -397,7 +406,7 @@
     justify-content: space-between;
     margin-bottom: 12px;
 
-    h3 { margin: 0; font-size: 0.95rem; font-weight: 600; }
+    h3 { margin: 0; font-size: 1.15rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
   }
 
   .search {
@@ -455,9 +464,10 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid transparent;
-  border-radius: 10px;
+  padding: 9px 12px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
   font: inherit;
   color: var(--text);
   text-align: left;
@@ -468,9 +478,14 @@
   &:hover { background: var(--surface-raised); }
   &:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-  &--active {
-    border-color: rgba(245, 184, 61, 0.45);
-    background: var(--accent-soft);
+  // The tracked plane's row lights up like a highlighted board line.
+  &--active,
+  &--active:hover {
+    color: var(--on-accent);
+    background: var(--accent);
+
+    .code,
+    .muted { color: var(--on-accent); }
   }
 
   &__id,
@@ -521,22 +536,13 @@
   margin: 0 auto;
   padding: 24px var(--gutter) 72px;
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
   &__empty {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 20px 24px;
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: var(--radius);
     color: var(--text-muted);
     background: var(--surface);
 
@@ -544,7 +550,7 @@
     strong { color: var(--text); }
 
     &--error {
-      border-color: rgba(248, 113, 113, 0.4);
+      border-color: rgba(255, 92, 77, 0.4);
       p { color: var(--danger); }
     }
   }
@@ -561,71 +567,86 @@
   }
 }
 
-.delay-card {
-  padding: 16px 18px;
+// A departures board: yellow type on black, one line per flight.
+.board {
+  overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(251, 191, 36, 0.06), var(--surface) 60%);
+  border-radius: var(--radius);
+  background: var(--board);
 
-  &__top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-
-    > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    text-transform: uppercase;
   }
 
-  &__minutes {
-    font-family: var(--mono);
-    font-size: 1.6rem;
+  th {
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--accent);
+    font-family: var(--display);
+    font-size: 0.85rem;
     font-weight: 600;
-    line-height: 1;
+    letter-spacing: 0.12em;
+    text-align: left;
+    white-space: nowrap;
+    color: var(--accent);
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.025); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  &__time { font-weight: 600; color: var(--text); }
+
+  &__flight {
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+
+  &__route { display: block; font-weight: 600; letter-spacing: 0.04em; }
+
+  &__place {
+    display: block;
+    max-width: 260px;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    text-transform: none;
+    color: var(--text-muted);
+  }
+
+  &__airline {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    text-transform: none;
+    color: var(--text-muted);
+  }
+
+  &__right { text-align: right; }
+
+  &__remark {
+    font-weight: 600;
+    letter-spacing: 0.04em;
     color: var(--warn);
-
-    small { margin-left: 3px; font-size: 0.75rem; color: var(--text-muted); }
+    animation: board-blink 2.4s steps(1) infinite;
   }
-
-  &__route {
-    margin: 14px 0 12px;
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-  }
-
-  &__times {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 0;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-
-    div { margin: 0; }
-
-    dt {
-      margin-bottom: 3px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    dd {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-    }
-  }
-
-  &__wx { flex-basis: 100%; margin-top: -2px; }
 }
 
+// Late flights flash slowly, as on a real board.
+@keyframes board-blink {
+  60% { opacity: 1; }
+  80% { opacity: 0.35; }
+}
 
 @keyframes rise {
   from { opacity: 0; transform: translateY(16px); }
@@ -637,13 +658,13 @@
 }
 
 @keyframes pulse {
-  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  70% { box-shadow: 0 0 0 8px rgba(61, 220, 132, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); }
 }
 
 @media (max-width: 900px) {
   .hero-section__veil {
-    background: linear-gradient(180deg, var(--bg) 0%, rgba(7, 11, 18, 0.85) 45%, rgba(7, 11, 18, 0.2) 75%, var(--bg) 100%);
+    background: linear-gradient(180deg, var(--bg) 0%, rgba(11, 11, 12, 0.85) 45%, rgba(11, 11, 12, 0.2) 75%, var(--bg) 100%);
   }
 
   .hero { padding-bottom: 180px; }
@@ -658,8 +679,9 @@
 
   .figures {
     grid-template-columns: repeat(3, auto);
-    gap: 20px 32px;
   }
+
+  .hide-md { display: none; }
 
 }
 
@@ -667,5 +689,6 @@
   .hero > *,
   .eyebrow__dot,
   .scroll-cue svg,
+  .board__remark,
   .detail { animation: none; }
 }

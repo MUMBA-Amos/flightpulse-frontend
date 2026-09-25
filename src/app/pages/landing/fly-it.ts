@@ -181,7 +181,7 @@ import { flyingConditions } from '../../shared/weather-format';
       margin-top: 16px;
       padding: 20px;
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: var(--radius);
       background: var(--surface);
       animation: rise 0.3s ease-out both;
     }
@@ -203,7 +203,7 @@ import { flyingConditions } from '../../shared/weather-format';
       height: 36px;
       padding: 0;
       border: 1px solid var(--border-strong);
-      border-radius: 8px;
+      border-radius: 3px;
       color: var(--text-muted);
       background: transparent;
       cursor: pointer;
@@ -227,7 +227,7 @@ import { flyingConditions } from '../../shared/weather-format';
       margin-bottom: 16px;
       padding: 12px 14px;
       border: 1px dashed var(--border-strong);
-      border-radius: 12px;
+      border-radius: var(--radius);
     }
     .prefill__label {
       display: block;
@@ -243,7 +243,7 @@ import { flyingConditions } from '../../shared/weather-format';
       width: 110px;
       padding: 6px 10px;
       border: 1px solid var(--border-strong);
-      border-radius: 8px;
+      border-radius: 3px;
       font-family: var(--mono);
       font-size: 0.9rem;
       text-transform: uppercase;
@@ -255,7 +255,7 @@ import { flyingConditions } from '../../shared/weather-format';
     .prefill ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
     .prefill li {
       padding: 3px 9px;
-      border-radius: 999px;
+      border-radius: 2px;
       font-family: var(--mono);
       font-size: 0.78rem;
       background: var(--accent-soft);
@@ -270,7 +270,7 @@ import { flyingConditions } from '../../shared/weather-format';
       min-width: 0;
       padding: 16px;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: var(--radius);
       background: rgba(255, 255, 255, 0.02);
     }
     .leg__label {
@@ -304,16 +304,16 @@ import { flyingConditions } from '../../shared/weather-format';
     .leg__facts small { display: block; margin-top: 2px; font-family: var(--sans); font-size: 0.72rem; color: var(--text-muted); }
     .freq { display: inline-block; margin-right: 10px; white-space: nowrap; }
     .cat { padding: 1px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
-    .cat--vfr { color: #34d399; background: rgba(52, 211, 153, 0.12); }
+    .cat--vfr { color: #3ddc84; background: rgba(61, 220, 132, 0.12); }
     .cat--mvfr { color: #60a5fa; background: rgba(96, 165, 250, 0.14); }
-    .cat--ifr { color: #f87171; background: rgba(248, 113, 113, 0.14); }
+    .cat--ifr { color: #ff5c4d; background: rgba(255, 92, 77, 0.14); }
     .cat--lifr { color: #e879f9; background: rgba(232, 121, 249, 0.14); }
     .report {
       display: flex;
       gap: 10px;
       margin-top: 8px;
       padding: 8px 10px;
-      border-radius: 8px;
+      border-radius: 3px;
       background: rgba(0, 0, 0, 0.25);
     }
     .report__label {

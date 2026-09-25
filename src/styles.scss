@@ -1,19 +1,29 @@
 :root {
-  --bg: #070b12;
-  --surface: #0e1522;
-  --surface-raised: #141d2e;
-  --border: rgba(148, 163, 184, 0.12);
-  --border-strong: rgba(148, 163, 184, 0.24);
-  --text: #e6ebf3;
-  --text-muted: #8391a7;
-  --accent: #f5b83d;
-  --accent-soft: rgba(245, 184, 61, 0.14);
-  --sky: #7dd3fc;
-  --ok: #34d399;
-  --warn: #fbbf24;
-  --danger: #f87171;
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  // Airport look: signage yellow on near-black, like terminal signs and
+  // departure boards.
+  --bg: #0b0b0c;
+  --surface: #131315;
+  --surface-raised: #1b1b1e;
+  --board: #070707;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #f1eee6;
+  --text-muted: #969184;
+  --accent: #ffc72c;
+  --accent-soft: rgba(255, 199, 44, 0.14);
+  /** Text on a yellow sign. */
+  --on-accent: #111111;
+  --sky: #7cc4ff;
+  --ok: #3ddc84;
+  --warn: #ff9f1a;
+  --danger: #ff5c4d;
+  /** Headings and labels: condensed, like airport signage. */
+  --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --sans: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /** Dot-matrix figures, like an LED departures board. */
+  --dot: 'Doto', var(--mono);
+  --radius: 4px;
   /** Side margin shared by the nav, page content and footer, so edges line up across pages. */
   --gutter: clamp(16px, 4vw, 40px);
 
@@ -41,44 +51,42 @@ body {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(1200px 500px at 90% -10%, rgba(245, 184, 61, 0.06), transparent 60%),
-    var(--bg);
+  background: var(--bg);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 // ---------- Page shell shared by every page ----------
 
-// Soft glows plus a faint dot grid that fades out down the page.
+// Flat near-black, like a terminal at night.
 .page {
   position: relative;
   isolation: isolate;
   display: block;
   min-height: 100vh;
-  background:
-    radial-gradient(900px 420px at 85% 0%, rgba(245, 184, 61, 0.08), transparent 65%),
-    radial-gradient(700px 500px at 0% 30%, rgba(57, 135, 229, 0.08), transparent 70%),
-    var(--bg);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px);
-    background-size: 22px 22px;
-    mask-image: linear-gradient(180deg, #000 0%, transparent 60%);
-  }
+  background: var(--bg);
 }
 
-// Small uppercase label above a heading, e.g. "DASHBOARD".
+// Label above a heading, e.g. "DASHBOARD", styled as a yellow airport sign.
 .kicker {
-  margin: 0 0 10px;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 3px 8px 2px;
+  border-radius: 2px;
+  font-family: var(--display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--on-accent);
+  background: var(--accent);
 }
 
 // ---------- Shared building blocks used across panels ----------
@@ -93,8 +101,10 @@ body {
 
   h2 {
     margin: 0 0 4px;
-    font-size: 1.1rem;
+    font-size: 1.35rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
 
   p { margin: 0; }
@@ -125,7 +135,7 @@ body {
   font-family: var(--mono);
   font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--accent);
 
   &--sm {
@@ -146,11 +156,15 @@ body {
   gap: 8px;
   padding: 9px 16px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 3px;
   font: inherit;
-  font-size: 0.875rem;
+  font-family: var(--display);
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #0a0f18;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--on-accent);
   background: var(--accent);
   cursor: pointer;
   transition: filter 0.15s, opacity 0.15s;
@@ -218,7 +232,7 @@ body {
     width: 100%;
     padding: 11px 14px 11px 40px;
     border: 1px solid var(--border-strong);
-    border-radius: 10px;
+    border-radius: var(--radius);
     font: inherit;
     font-size: 0.9rem;
     color: var(--text);
@@ -236,13 +250,13 @@ body {
   display: inline-flex;
   padding: 3px;
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--surface);
 
   button {
     padding: 7px 12px;
     border: none;
-    border-radius: 7px;
+    border-radius: 3px;
     font: inherit;
     font-size: 0.8rem;
     font-weight: 600;
@@ -272,7 +286,7 @@ body {
 .select {
   padding: 9px 34px 9px 12px;
   border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
   font: inherit;
   font-size: 0.85rem;
   color: var(--text);
@@ -292,7 +306,7 @@ body {
   gap: 12px;
   padding: 48px 24px;
   border: 1px dashed var(--border-strong);
-  border-radius: 12px;
+  border-radius: var(--radius);
   text-align: center;
   color: var(--text-muted);
 
@@ -300,8 +314,8 @@ body {
 
   &--error {
     border-style: solid;
-    border-color: rgba(248, 113, 113, 0.4);
-    background: rgba(248, 113, 113, 0.06);
+    border-color: rgba(255, 92, 77, 0.4);
+    background: rgba(255, 92, 77, 0.06);
 
     strong { color: var(--danger); }
   }
@@ -319,28 +333,30 @@ body {
 .status {
   display: inline-block;
   padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  border-radius: 2px;
+  font-family: var(--display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--text-muted);
-  background: rgba(148, 163, 184, 0.12);
+  background: rgba(255, 255, 255, 0.07);
 
-  &--scheduled { color: var(--sky); background: rgba(125, 211, 252, 0.12); }
-  &--active    { color: var(--ok); background: rgba(52, 211, 153, 0.12); }
-  &--landed    { color: #c4b5fd; background: rgba(196, 181, 253, 0.12); }
+  // Departure-board status colours.
+  &--scheduled { color: var(--sky); background: rgba(124, 196, 255, 0.12); }
+  &--active    { color: var(--ok); background: rgba(61, 220, 132, 0.12); }
+  &--landed    { color: var(--text); background: rgba(255, 255, 255, 0.1); }
   &--cancelled,
-  &--incident  { color: var(--danger); background: rgba(248, 113, 113, 0.12); }
-  &--diverted  { color: var(--warn); background: rgba(251, 191, 36, 0.12); }
+  &--incident  { color: var(--danger); background: rgba(255, 92, 77, 0.14); }
+  &--diverted  { color: var(--warn); background: rgba(255, 159, 26, 0.14); }
 }
 
 // ---------- Data tables ----------
 
 .table-wrap {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
   overflow-x: auto;
 }
@@ -353,9 +369,10 @@ body {
   th {
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
-    font-size: 0.72rem;
+    font-family: var(--display);
+    font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-align: left;
     text-transform: uppercase;
     white-space: nowrap;
@@ -399,7 +416,7 @@ body {
   height: 6px;
   overflow: hidden;
   border-radius: 3px;
-  background: rgba(148, 163, 184, 0.12);
+  background: rgba(200, 194, 180, 0.12);
 
   &__fill {
     background: var(--accent);

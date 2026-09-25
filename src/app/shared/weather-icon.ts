@@ -50,7 +50,7 @@ import { WeatherKind } from './weather-format';
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    .sun { stroke: #f5b83d; }
+    .sun { stroke: #ffc72c; }
     .drop { stroke: #7dd3fc; }
   `,
 })

@@ -42,7 +42,7 @@ import { Brand } from './brand';
     .footer {
       margin-top: 48px;
       border-top: 1px solid var(--border);
-      background: rgba(8, 12, 20, 0.6);
+      background: rgba(11, 11, 12, 0.6);
     }
 
     .footer__inner {

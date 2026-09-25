@@ -5,7 +5,7 @@
   overflow: hidden;
   height: 240px;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, #0b1a2e 0%, #0a1322 60%, var(--bg) 100%);
+  background: linear-gradient(180deg, #151619 0%, #0f0f11 60%, var(--bg) 100%);
 
   &__text {
     position: relative;
@@ -15,9 +15,11 @@
 
     h1 {
       margin: 0 0 10px;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
       font-weight: 700;
-      letter-spacing: -0.02em;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
     }
 
     .muted { max-width: 30rem; font-size: 0.95rem; line-height: 1.6; }
@@ -38,7 +40,7 @@
     width: 220px;
     height: 220px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 217, 138, 0.55) 0%, rgba(245, 184, 61, 0.18) 38%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 217, 138, 0.55) 0%, rgba(255, 199, 44, 0.18) 38%, transparent 70%);
     animation: glow 8s ease-in-out infinite;
   }
 
@@ -121,8 +123,8 @@
   min-width: 0;
   padding: 16px 18px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(57, 135, 229, 0.06), var(--surface) 60%);
+  border-radius: var(--radius);
+  background: var(--surface);
 
   &__label {
     display: flex;
@@ -167,16 +169,16 @@
   height: 10px;
   margin: 6px 0 2px;
   overflow: hidden;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.12);
+  border-radius: 2px;
+  background: rgba(200, 194, 180, 0.12);
 
   &__part {
     height: 100%;
     transition: width 0.4s ease;
 
-    &--good { background: #34d399; }
+    &--good { background: #3ddc84; }
     &--fair { background: #60a5fa; }
-    &--poor { background: #f87171; }
+    &--poor { background: #ff5c4d; }
     &--very-poor { background: #e879f9; }
   }
 }
@@ -196,9 +198,9 @@
     height: 8px;
     border-radius: 50%;
 
-    &--good { background: #34d399; }
+    &--good { background: #3ddc84; }
     &--fair { background: #60a5fa; }
-    &--poor { background: #f87171; }
+    &--poor { background: #ff5c4d; }
     &--very-poor { background: #e879f9; }
   }
 }
@@ -208,8 +210,8 @@
 .panel {
   padding: 20px 22px 22px;
   border: 1px solid var(--border);
-  border-radius: 16px;
-  background: rgba(14, 21, 34, 0.72);
+  border-radius: var(--radius);
+  background: rgba(19, 19, 21, 0.72);
   box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.8);
 }
 

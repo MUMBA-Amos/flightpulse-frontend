@@ -67,11 +67,11 @@ import { describeWx, flyingConditions, weatherKind, wind } from './weather-forma
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text-muted);
-      background: rgba(148, 163, 184, 0.12);
+      background: rgba(200, 194, 180, 0.12);
     }
-    .wx__cat--vfr { color: #34d399; background: rgba(52, 211, 153, 0.12); }
+    .wx__cat--vfr { color: #3ddc84; background: rgba(61, 220, 132, 0.12); }
     .wx__cat--mvfr { color: #60a5fa; background: rgba(96, 165, 250, 0.14); }
-    .wx__cat--ifr { color: #f87171; background: rgba(248, 113, 113, 0.14); }
+    .wx__cat--ifr { color: #ff5c4d; background: rgba(255, 92, 77, 0.14); }
     .wx__cat--lifr { color: #e879f9; background: rgba(232, 121, 249, 0.14); }
   `,
 })

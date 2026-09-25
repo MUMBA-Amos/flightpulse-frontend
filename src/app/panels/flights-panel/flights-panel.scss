@@ -4,7 +4,7 @@ $columns: minmax(150px, 1.1fr) minmax(120px, 0.8fr) minmax(180px, 1.5fr) minmax(
 
 .board {
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
 
@@ -98,7 +98,7 @@ $columns: minmax(150px, 1.1fr) minmax(120px, 0.8fr) minmax(180px, 1.5fr) minmax(
     gap: 14px 16px;
     padding: 16px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
     background: var(--surface);
 
     &:last-child { border-bottom: 1px solid var(--border); }

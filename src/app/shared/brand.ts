@@ -20,7 +20,7 @@ import { RouterLink } from '@angular/router';
       gap: 12px;
       color: inherit;
       text-decoration: none;
-      &:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+      &:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
     }
     .brand__icon {
       display: block;
@@ -29,14 +29,21 @@ import { RouterLink } from '@angular/router';
     }
     .brand__name {
       display: block;
-      font-size: 1.15rem;
+      font-family: var(--display);
+      font-size: 1.45rem;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
     .brand__accent { color: var(--accent); }
     .brand__tag {
       display: block;
-      font-size: 0.75rem;
+      margin-top: 2px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--text-muted);
     }
   `,

@@ -65,7 +65,7 @@ import { Brand } from './brand';
       gap: 24px;
       padding: 14px var(--gutter);
       border-bottom: 1px solid var(--border);
-      background: rgba(8, 12, 20, 0.85);
+      background: rgba(11, 11, 12, 0.85);
       backdrop-filter: blur(10px);
     }
 
@@ -77,22 +77,26 @@ import { Brand } from './brand';
     }
 
     .nav__link {
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      padding: 7px 14px 6px;
+      border-radius: 2px;
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--text-muted);
       text-decoration: none;
       transition: color 0.15s, background 0.15s;
 
-      &:hover { color: var(--text); background: rgba(148, 163, 184, 0.08); }
+      &:hover { color: var(--text); background: rgba(200, 194, 180, 0.08); }
       &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     }
 
-    .nav__link--active {
-      color: var(--text);
-      background: rgba(148, 163, 184, 0.1);
-      box-shadow: inset 0 -2px 0 var(--accent);
+    /* The current page is lit like a yellow terminal sign. */
+    .nav__link--active,
+    .nav__link--active:hover {
+      color: var(--on-accent);
+      background: var(--accent);
     }
 
     .nav__actions {
@@ -108,9 +112,9 @@ import { Brand } from './brand';
       height: 38px;
       padding: 0;
       border: 1px solid var(--border-strong);
-      border-radius: 10px;
+      border-radius: var(--radius);
       color: var(--text);
-      background: rgba(14, 21, 34, 0.6);
+      background: rgba(19, 19, 21, 0.6);
       cursor: pointer;
 
       svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
@@ -133,14 +137,14 @@ import { Brand } from './brand';
         margin: 6px 0 0;
         padding: 8px;
         border: 1px solid var(--border-strong);
-        border-radius: 12px;
-        background: #0a101c;
+        border-radius: var(--radius);
+        background: #101012;
         box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
       }
 
       .nav__links--open { display: flex; }
       .nav__link { padding: 12px 14px; }
-      .nav__link--active { box-shadow: inset 3px 0 0 var(--accent); }
+
     }
   `,
 })

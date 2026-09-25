@@ -258,38 +258,38 @@
       <p><strong>No delays right now.</strong> None of the flights in the latest data report a departure or arrival delay.</p>
     </div>
   } @else {
-    <ul class="delays__grid">
-      @for (f of topDelays(); track $index) {
-        <li class="delay-card">
-          <div class="delay-card__top">
-            <div>
-              <span class="code">{{ flightCode(f) }}</span>
-              <span class="muted">{{ f.airline_name ?? 'Unknown airline' }}</span>
-            </div>
-            <span class="delay-card__minutes">+{{ worstDelay(f) }}<small>min</small></span>
-          </div>
-          <p class="delay-card__route">{{ f.route ?? (f.departure_iata ?? '???') + ' → ' + (f.arrival_iata ?? '???') }}</p>
-          <dl class="delay-card__times">
-            <div>
-              <dt>Departure</dt>
-              <dd>
-                {{ f.scheduled_departure ? (f.scheduled_departure | date: 'HH:mm') : '--:--' }}
-                @if ((f.departure_delay ?? 0) > 0) { <span class="warn">+{{ f.departure_delay }}</span> }
-              </dd>
-              <app-weather-badge class="delay-card__wx" [icao]="f.departure_icao" />
-            </div>
-            <div>
-              <dt>Arrival</dt>
-              <dd>
-                {{ f.scheduled_arrival ? (f.scheduled_arrival | date: 'HH:mm') : '--:--' }}
-                @if ((f.arrival_delay ?? 0) > 0) { <span class="warn">+{{ f.arrival_delay }}</span> }
-              </dd>
-              <app-weather-badge class="delay-card__wx" [icao]="f.arrival_icao" />
-            </div>
-          </dl>
-        </li>
-      }
-    </ul>
+    <div class="board">
+      <table class="board__table">
+        <caption class="visually-hidden">Most delayed flights</caption>
+        <thead>
+          <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Flight</th>
+            <th scope="col">Route</th>
+            <th scope="col" class="hide-sm">Airline</th>
+            <th scope="col" class="hide-md">Weather at destination</th>
+            <th scope="col" class="board__right">Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of topDelays(); track $index) {
+            <tr>
+              <td class="board__time">{{ f.scheduled_departure ? (f.scheduled_departure | date: 'HH:mm') : '--:--' }}</td>
+              <td class="board__flight">{{ flightCode(f) }}</td>
+              <td>
+                <span class="board__route">{{ f.departure_iata ?? '???' }} → {{ f.arrival_iata ?? '???' }}</span>
+                <span class="board__place">{{ f.arrival_airport ?? '' }}</span>
+              </td>
+              <td class="hide-sm board__airline">{{ f.airline_name ?? 'Unknown airline' }}</td>
+              <td class="hide-md"><app-weather-badge [icao]="f.arrival_icao" /></td>
+              <td class="board__right">
+                <span class="board__remark">Delayed {{ worstDelay(f) }} min</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
     @if (delayedList().length > topDelays().length) {
       <a routerLink="/dashboard" class="tracker__more">
         {{ delayedList().length - topDelays().length }} more delayed flights in the dashboard
