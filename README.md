@@ -89,3 +89,7 @@ Every push to `main` is built and deployed by Vercel. `vercel.json` sets the bui
 Aircraft positions from the [OpenSky Network](https://opensky-network.org), flights and delays from [Aviationstack](https://aviationstack.com), airport weather from the [Aviation Weather Center](https://aviationweather.gov) and flight routes from [adsbdb](https://www.adsbdb.com).
 
 Delay figures come from a nightly sample of up to 100 landed departures per airport on Aviationstack's free plan, rotating through the day so every hour is covered over time. They are a sample, not a complete record, and small groups are marked as such. Plane positions are estimated between updates. For information only, not for navigation.
+
+## License
+
+The code is released under the [MIT License](LICENSE). The flight, aircraft and weather data it collects belongs to its sources and follows their terms.
