@@ -14,6 +14,7 @@ import { SiteNav } from '../../shared/site-nav';
 import { WeatherBadge } from '../../shared/weather-badge';
 import { airportsByActivity } from '../../shared/weather-airports';
 import { WeatherCard } from '../../shared/weather-card';
+import { FlyIt } from './fly-it';
 import { Globe, RouteLine } from './globe/globe';
 
 /** How many airports the weather section shows; the rest are on /weather. */
@@ -21,7 +22,7 @@ const WEATHER_AIRPORTS = 8;
 
 @Component({
   selector: 'app-landing',
-  imports: [DatePipe, DecimalPipe, RouterLink, Globe, WeatherBadge, WeatherCard, SiteNav],
+  imports: [DatePipe, DecimalPipe, RouterLink, Globe, WeatherBadge, WeatherCard, SiteNav, FlyIt],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
   host: { class: 'page' },
@@ -137,7 +138,7 @@ export class Landing {
     this.query.set((event.target as HTMLInputElement).value);
   }
 
-  protected scrollTo(id: 'weather' | 'tracking'): void {
+  protected scrollTo(id: 'weather' | 'tracking' | 'fly-it'): void {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }
 }

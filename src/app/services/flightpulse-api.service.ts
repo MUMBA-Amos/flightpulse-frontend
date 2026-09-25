@@ -8,6 +8,7 @@ import { AirlinePerformance } from '../models/airline.model';
 import { AirportActivity } from '../models/airport.model';
 import { Flight } from '../models/flight.model';
 import { AirportInsights, TrackedAirport } from '../models/insights.model';
+import { SimBriefing } from '../models/sim.model';
 import { FlightPulseStats } from '../models/stats.model';
 import { WeatherBatchResponse, WeatherResponse } from '../models/weather.model';
 
@@ -68,5 +69,10 @@ export class FlightPulseApi {
   /** Origin and destination for a callsign (all null when unknown). */
   getAircraftRoute(callsign: string): Observable<AircraftRoute> {
     return this.http.get<AircraftRoute>(`${this.baseUrl}/aircraft/route/${encodeURIComponent(callsign)}`);
+  }
+
+  /** Flight-sim briefing for a live flight: aircraft, both airports' weather and runways, and a SimBrief link. */
+  getSimBriefing(callsign: string, icao24: string): Observable<SimBriefing> {
+    return this.http.get<SimBriefing>(`${this.baseUrl}/sim/${encodeURIComponent(callsign)}`, { params: { icao24 } });
   }
 }

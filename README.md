@@ -9,6 +9,7 @@ FlightPulse follows thousands of aircraft around the world on a live 3D globe, a
 ## Features
 
 - **Live globe** of about 500 aircraft in the air, moving at their real speed. Click a plane to follow it and see its route drawn from origin to destination.
+- **Fly it, for flight simmers:** for the tracked flight, the aircraft type and registration, both airports' live weather (METAR) and forecast (TAF), runways, radio frequencies, the runway the wind favours, and a one-click SimBrief flight plan.
 - **Delay insights** for KUL and PEN over the last 30 days: on-time rate (departed within 15 minutes), most and least punctual airline, worst hour to fly, charts by hour, airline, delay length and day, and a **route map** of destinations coloured by punctuality.
 - **Dashboard** of the day's flights, airlines and airports, with search, filters, sorting and paging on every table.
 - **Delay watch** highlighting the most delayed flights.
