@@ -117,4 +117,10 @@ export class Insights {
   protected airlineLabel(a: AirlineInsight): string {
     return `${a.airline_name}: ${a.on_time_pct}% on time across ${a.flights} flights, average delay ${a.avg_delay_min} minutes`;
   }
+
+  /** Drop parenthetical former names so the destination column stays readable. */
+  protected airportLabel(name: string | null): string {
+    if (!name) return '';
+    return name.replace(/\s*\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+  }
 }

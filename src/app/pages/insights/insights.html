@@ -214,7 +214,7 @@
       </section>
 
       <!-- Routes -->
-      <section class="chart" aria-labelledby="routes-title">
+      <section class="chart chart--wide" aria-labelledby="routes-title">
         <header class="chart__head">
           <div>
             <h2 id="routes-title">Least punctual destinations</h2>
@@ -224,29 +224,33 @@
         @if (worstRoutes().length === 0) {
           <p class="empty">No destination has 3 departures yet.</p>
         } @else {
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Destination</th>
-                <th class="num">Flights</th>
-                <th class="num">On time</th>
-                <th class="num">Avg delay</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (r of worstRoutes(); track r.arrival_iata) {
+          <div class="routes">
+            <table class="data-table routes__table">
+              <thead>
                 <tr>
-                  <td>
-                    <span class="code">{{ r.arrival_iata }}</span>
-                    <span class="muted"> {{ r.arrival_airport }}</span>
-                  </td>
-                  <td class="num">{{ r.flights }}</td>
-                  <td class="num">{{ r.on_time_pct | number: '1.0-0' }}%</td>
-                  <td class="num">{{ r.avg_delay_min | number: '1.0-0' }} min</td>
+                  <th>Destination</th>
+                  <th class="num">Flights</th>
+                  <th class="num">On time</th>
+                  <th class="num">Avg delay</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                @for (r of worstRoutes(); track r.arrival_iata) {
+                  <tr>
+                    <td>
+                      <span class="dest" [attr.title]="r.arrival_airport || r.arrival_iata">
+                        <span class="dest__iata">{{ r.arrival_iata }}</span>
+                        <span class="dest__name">{{ airportLabel(r.arrival_airport) }}</span>
+                      </span>
+                    </td>
+                    <td class="num">{{ r.flights }}</td>
+                    <td class="num">{{ r.on_time_pct | number: '1.0-0' }}%</td>
+                    <td class="num">{{ r.avg_delay_min | number: '1.0-0' }} min</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         }
       </section>
     </div>

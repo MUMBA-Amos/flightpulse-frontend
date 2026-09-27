@@ -318,6 +318,51 @@
   }
 }
 
+.routes {
+  overflow-x: auto;
+
+  &__table {
+    table-layout: fixed;
+
+    th,
+    td {
+      &:nth-child(2) { width: 5rem; }
+      &:nth-child(3) { width: 5.5rem; }
+      &:nth-child(4) { width: 6.5rem; }
+    }
+
+    td:first-child {
+      overflow: hidden;
+      max-width: 0;
+    }
+  }
+}
+
+.dest {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+
+  &__iata {
+    flex: 0 0 2.6rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+
+  &__name {
+    overflow: hidden;
+    min-width: 0;
+    font-size: 0.85rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+  }
+}
+
 .method {
   max-width: 60rem;
   margin: 28px 0 0;
@@ -335,4 +380,11 @@
   .columns { gap: 2px; padding-left: 32px; }
   .columns__grid span::after { left: 32px; }
   .bars__row { grid-template-columns: minmax(0, 8rem) minmax(0, 1fr) 2.8rem; }
+
+  .routes__table th,
+  .routes__table td {
+    &:nth-child(2) { width: 3.8rem; }
+    &:nth-child(3) { width: 4.4rem; }
+    &:nth-child(4) { width: 5.2rem; }
+  }
 }
