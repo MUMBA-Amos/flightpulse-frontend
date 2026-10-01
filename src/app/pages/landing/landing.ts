@@ -31,6 +31,12 @@ const WEATHER_AIRPORTS = 8;
 export class Landing {
   private readonly api = inject(FlightPulseApi);
 
+  /** The Mac installer attached to the newest GitHub release. */
+  protected readonly downloadUrl =
+    'https://github.com/MUMBA-Amos/flightpulse-frontend/releases/latest/download/FlightPulse.dmg';
+  /** The desktop app marks its user agent, so it doesn't offer to download itself. */
+  protected readonly inDesktopApp = navigator.userAgent.includes('FlightPulseDesktop');
+
   protected readonly stats = rxResource({ stream: () => this.api.getStats() });
   protected readonly aircraft = rxResource({ stream: () => this.api.getAircraft(true) });
   protected readonly delayed = rxResource({ stream: () => this.api.getDelayedFlights() });
